@@ -146,9 +146,9 @@ const Header = () => {
                     </nav>
 
                     {/* Right side section: Evaluate company + User Dropdown */}
-                    <div className="flex items-center gap-6">
-                        {/* Free valuation text link */}
-                        <Link to="/valuation" className="text-dark-500 hover:text-brand-900 font-bold text-[15px] transition-colors">
+                    <div className="flex items-center gap-3 md:gap-6">
+                        {/* Free valuation text link - Hidden on mobile, moved to dropdown */}
+                        <Link to="/valuation" className="hidden md:block text-dark-500 hover:text-brand-900 font-bold text-[15px] transition-colors">
                             Valúa tu compañía
                         </Link>
 
@@ -166,7 +166,42 @@ const Header = () => {
 
                             {/* Dropdown Panel */}
                             {isMenuOpen && (
-                                <div className="absolute right-0 mt-3 w-56 bg-white rounded-[20px] shadow-[0_10px_40px_rgba(0,0,0,0.15)] border border-light-300 py-3 z-50 overflow-hidden">
+                                <div className="absolute right-0 mt-3 w-64 md:w-56 bg-white rounded-[20px] shadow-[0_10px_40px_rgba(0,0,0,0.15)] border border-light-300 py-3 z-50 overflow-y-auto max-h-[85vh]">
+
+                                    {/* Mobile Only Navigation Menu */}
+                                    <div className="md:hidden">
+                                        <Link to="/marketplace" onClick={() => setIsMenuOpen(false)} className="block px-6 py-3 text-[15px] font-bold text-[#3B3C4B] hover:bg-light-100 transition-colors">
+                                            Marketplace
+                                        </Link>
+
+                                        <div className="px-6 py-2 text-[11px] font-bold text-dark-500 tracking-wider uppercase mt-1">Vendedores</div>
+                                        <Link to="/signup" onClick={() => setIsMenuOpen(false)} className="block px-6 py-2.5 text-[15px] font-medium text-[#7A7B8B] hover:bg-light-100 transition-colors">
+                                            Publica tu Empresa
+                                        </Link>
+                                        <Link to="/signup" onClick={() => setIsMenuOpen(false)} className="block px-6 py-2.5 text-[15px] font-medium text-[#7A7B8B] hover:bg-light-100 transition-colors">
+                                            Ayuda para vender
+                                        </Link>
+
+                                        <div className="px-6 py-2 text-[11px] font-bold text-dark-500 tracking-wider uppercase mt-2">Compradores</div>
+                                        <Link to="/buyers" onClick={() => setIsMenuOpen(false)} className="block px-6 py-2.5 text-[15px] font-medium text-[#7A7B8B] hover:bg-light-100 transition-colors">
+                                            Directorio
+                                        </Link>
+
+                                        <div className="px-6 py-2 text-[11px] font-bold text-dark-500 tracking-wider uppercase mt-2">Precios</div>
+                                        <Link to="/pricing/sellers" onClick={() => setIsMenuOpen(false)} className="block px-6 py-2.5 text-[15px] font-medium text-[#7A7B8B] hover:bg-light-100 transition-colors">
+                                            Para Vendedores
+                                        </Link>
+                                        <Link to="/pricing/buyers" onClick={() => setIsMenuOpen(false)} className="block px-6 py-2.5 text-[15px] font-medium text-[#7A7B8B] hover:bg-light-100 transition-colors">
+                                            Para Compradores
+                                        </Link>
+
+                                        <div className="border-t border-light-300 my-2 mx-5"></div>
+                                        <Link to="/valuation" onClick={() => setIsMenuOpen(false)} className="block px-6 py-3 text-[15px] font-bold text-brand-900 hover:bg-brand-50 transition-colors">
+                                            Valúa tu compañía
+                                        </Link>
+                                        <div className="border-t border-light-300 my-2 mx-5"></div>
+                                    </div>
+
                                     {!user ? (
                                         <>
                                             <Link
