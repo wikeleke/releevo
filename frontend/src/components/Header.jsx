@@ -51,7 +51,7 @@ const Header = () => {
 
                         {/* Vendedores Dropdown Trigger */}
                         <div
-                            className="flex items-center static md:relative"
+                            className="flex items-center cursor-pointer"
                             onMouseEnter={() => setIsMegaMenuOpen(true)}
                             onMouseLeave={() => setIsMegaMenuOpen(false)}
                         >
@@ -65,7 +65,7 @@ const Header = () => {
 
                             {/* Mega Menu Panel */}
                             {isMegaMenuOpen && (
-                                <div className="absolute left-1/2 -translate-x-1/2 md:left-[-150px] md:translate-x-0 top-full pt-7 w-screen max-w-4xl z-50 cursor-default">
+                                <div className="absolute left-[-20px] md:left-[-40px] top-full pt-7 w-[750px] max-w-[85vw] z-50 cursor-default">
                                     <div className="bg-white rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.1)] border border-light-300 p-8">
                                         <h2 className="text-[28px] font-extrabold text-[#000000] mb-8">Vendedores</h2>
 
@@ -99,7 +99,7 @@ const Header = () => {
 
                         {/* Pricing Dropdown Trigger */}
                         <div
-                            className="flex items-center static md:relative"
+                            className="flex items-center cursor-pointer"
                             ref={pricingMegaMenuRef}
                             onMouseEnter={() => setIsPricingMegaMenuOpen(true)}
                             onMouseLeave={() => setIsPricingMegaMenuOpen(false)}
@@ -114,7 +114,7 @@ const Header = () => {
 
                             {/* Pricing Mega Menu Panel */}
                             {isPricingMegaMenuOpen && (
-                                <div className="absolute left-1/2 -translate-x-1/2 md:left-[-150px] md:translate-x-0 top-full pt-7 w-screen max-w-4xl z-50 cursor-default">
+                                <div className="absolute right-[-20px] md:right-[-40px] top-full pt-7 w-[750px] max-w-[85vw] z-50 cursor-default">
                                     <div className="bg-white rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.1)] border border-light-300 p-8">
                                         <h2 className="text-[28px] font-extrabold text-[#000000] mb-8">Precio</h2>
 
