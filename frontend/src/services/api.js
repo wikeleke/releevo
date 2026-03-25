@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: import.meta.env.PROD ? 'https://releevo.onrender.com/api' : 'http://localhost:5001/api',
+    baseURL: 'https://releevo.onrender.com/api',
 });
 
 api.interceptors.request.use(
