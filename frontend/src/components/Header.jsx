@@ -65,29 +65,29 @@ const Header = () => {
 
                             {/* Mega Menu Panel */}
                             {isMegaMenuOpen && (
-                                <div className="absolute left-[-20px] md:left-[-40px] top-full pt-7 w-[750px] max-w-[85vw] z-50 cursor-default">
-                                    <div className="bg-white rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.1)] border border-light-300 p-8">
-                                        <h2 className="text-[28px] font-extrabold text-[#000000] mb-8">Vendedores</h2>
+                                <div className="absolute left-[-20px] md:left-[-40px] top-full pt-6 w-[95vw] md:w-[70vw] lg:w-[600px] z-50 cursor-default transition-all duration-300">
+                                    <div className="bg-white rounded-[24px] shadow-[0_20px_60px_rgba(0,0,0,0.1)] border border-light-300 p-5 md:p-6">
+                                        <h2 className="text-2xl font-extrabold text-[#000000] mb-5">Vendedores</h2>
 
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
                                             {/* Card 1 */}
-                                            <div onClick={() => { setIsMegaMenuOpen(false); navigate('/signup'); }} className="bg-[#F8F9FE] p-8 rounded-3xl cursor-pointer hover:bg-[#F2F4FC] transition-colors border border-transparent hover:border-brand-300 group">
-                                                <div className="w-[52px] h-[52px] rounded-full bg-[#ECF1FF] flex items-center justify-center text-brand-900 mb-8 shadow-sm">
-                                                    <FilePlus strokeWidth={2.5} className="w-6 h-6 group-hover:scale-110 transition-transform" />
+                                            <div onClick={() => { setIsMegaMenuOpen(false); navigate('/signup'); }} className="bg-[#F8F9FE] p-5 md:p-6 rounded-[20px] cursor-pointer hover:bg-[#F2F4FC] transition-colors border border-transparent hover:border-brand-300 group flex flex-col h-full">
+                                                <div className="w-[44px] h-[44px] rounded-full bg-[#ECF1FF] flex items-center justify-center text-brand-900 mb-5 shadow-sm">
+                                                    <FilePlus strokeWidth={2.5} className="w-5 h-5 group-hover:scale-110 transition-transform" />
                                                 </div>
-                                                <h3 className="text-xl font-extrabold text-[#111124] mb-3">Publica tu Empresa</h3>
-                                                <p className="text-[#393A47] text-[15px] font-medium mb-3 leading-snug">Crea y publica el listado de tu compañía frente a más de 30k+ compradores reales.</p>
-                                                <p className="text-[#7A7B8B] text-[14px] italic">Vende en Releevo utilizando nuestras herramientas expertas y soporte constante.</p>
+                                                <h3 className="text-[17px] font-extrabold text-[#111124] mb-2 leading-tight">Publica tu Empresa</h3>
+                                                <p className="text-[#393A47] text-[13px] md:text-[14px] font-medium mb-3 leading-snug flex-grow">Crea y publica el listado de tu compañía frente a más de 30k+ compradores reales.</p>
+                                                <p className="text-[#7A7B8B] text-[12px] italic mt-auto">Vende con nuestras herramientas expertas.</p>
                                             </div>
 
                                             {/* Card 2 */}
-                                            <div onClick={() => { setIsMegaMenuOpen(false); navigate('/signup'); }} className="bg-[#F8F9FE] p-8 rounded-3xl cursor-pointer hover:bg-[#F2F4FC] transition-colors border border-transparent hover:border-brand-300 group">
-                                                <div className="w-[52px] h-[52px] rounded-full bg-[#ECF1FF] flex items-center justify-center text-brand-900 mb-8 shadow-sm">
-                                                    <Handshake strokeWidth={2.5} className="w-6 h-6 group-hover:scale-110 transition-transform" />
+                                            <div onClick={() => { setIsMegaMenuOpen(false); navigate('/signup'); }} className="bg-[#F8F9FE] p-5 md:p-6 rounded-[20px] cursor-pointer hover:bg-[#F2F4FC] transition-colors border border-transparent hover:border-brand-300 group flex flex-col h-full">
+                                                <div className="w-[44px] h-[44px] rounded-full bg-[#ECF1FF] flex items-center justify-center text-brand-900 mb-5 shadow-sm">
+                                                    <Handshake strokeWidth={2.5} className="w-5 h-5 group-hover:scale-110 transition-transform" />
                                                 </div>
-                                                <h3 className="text-xl font-extrabold text-[#111124] mb-3">Ayuda para vender</h3>
-                                                <p className="text-[#393A47] text-[15px] font-medium mb-3 leading-snug">Servicios de asesoría de adquisición a la medida para fundadores locales.</p>
-                                                <p className="text-[#7A7B8B] text-[14px] italic">Trabaja con un experto consultor y obtén el mejor precio bajo las condiciones más amigables.</p>
+                                                <h3 className="text-[17px] font-extrabold text-[#111124] mb-2 leading-tight">Ayuda para vender</h3>
+                                                <p className="text-[#393A47] text-[13px] md:text-[14px] font-medium mb-3 leading-snug flex-grow">Servicios de asesoría de adquisición a la medida para fundadores locales.</p>
+                                                <p className="text-[#7A7B8B] text-[12px] italic mt-auto">Obtén el mejor precio con ayuda.</p>
                                             </div>
                                         </div>
                                     </div>
@@ -114,29 +114,29 @@ const Header = () => {
 
                             {/* Pricing Mega Menu Panel */}
                             {isPricingMegaMenuOpen && (
-                                <div className="absolute right-[-20px] md:right-[-40px] top-full pt-7 w-[750px] max-w-[85vw] z-50 cursor-default">
-                                    <div className="bg-white rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.1)] border border-light-300 p-8">
-                                        <h2 className="text-[28px] font-extrabold text-[#000000] mb-8">Precio</h2>
+                                <div className="absolute right-[-20px] md:right-[-40px] xl:right-0 top-full pt-6 w-[95vw] md:w-[70vw] lg:w-[600px] z-50 cursor-default transition-all duration-300">
+                                    <div className="bg-white rounded-[24px] shadow-[0_20px_60px_rgba(0,0,0,0.1)] border border-light-300 p-5 md:p-6">
+                                        <h2 className="text-2xl font-extrabold text-[#000000] mb-5">Precio</h2>
 
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
                                             {/* Sellers Pricing */}
-                                            <div onClick={() => { setIsPricingMegaMenuOpen(false); navigate('/pricing/sellers'); }} className="bg-[#F8F9FE] p-8 rounded-3xl cursor-pointer hover:bg-[#F2F4FC] transition-colors border border-transparent hover:border-brand-300 group">
-                                                <div className="w-[52px] h-[52px] rounded-full bg-[#ECF1FF] flex items-center justify-center text-brand-900 mb-8 shadow-sm">
-                                                    <FilePlus strokeWidth={2.5} className="w-6 h-6 group-hover:scale-110 transition-transform" />
+                                            <div onClick={() => { setIsPricingMegaMenuOpen(false); navigate('/pricing/sellers'); }} className="bg-[#F8F9FE] p-5 md:p-6 rounded-[20px] cursor-pointer hover:bg-[#F2F4FC] transition-colors border border-transparent hover:border-brand-300 group flex flex-col h-full">
+                                                <div className="w-[44px] h-[44px] rounded-full bg-[#ECF1FF] flex items-center justify-center text-brand-900 mb-5 shadow-sm">
+                                                    <FilePlus strokeWidth={2.5} className="w-5 h-5 group-hover:scale-110 transition-transform" />
                                                 </div>
-                                                <h3 className="text-xl font-extrabold text-[#111124] mb-3">Vendedores</h3>
-                                                <p className="text-[#393A47] text-[15px] font-medium mb-3 leading-snug">Vende tu startup con un plan de adquisición adaptado a tus objetivos de salida.</p>
-                                                <p className="text-[#7A7B8B] text-[14px] italic">Publica y vende tu negocio con soporte experto de principio a fin.</p>
+                                                <h3 className="text-[17px] font-extrabold text-[#111124] mb-2 leading-tight">Vendedores</h3>
+                                                <p className="text-[#393A47] text-[13px] md:text-[14px] font-medium mb-3 leading-snug flex-grow">Vende tu startup con un plan de adquisición adaptado a tus objetivos de salida.</p>
+                                                <p className="text-[#7A7B8B] text-[12px] italic mt-auto">Publica y vende tu negocio con nosotros.</p>
                                             </div>
 
                                             {/* Buyers Pricing */}
-                                            <div onClick={() => { setIsPricingMegaMenuOpen(false); navigate('/pricing/buyers'); }} className="bg-[#F8F9FE] p-8 rounded-3xl cursor-pointer hover:bg-[#F2F4FC] transition-colors border border-transparent hover:border-brand-300 group">
-                                                <div className="w-[52px] h-[52px] rounded-full bg-[#ECF1FF] flex items-center justify-center text-brand-900 mb-8 shadow-sm">
-                                                    <Star strokeWidth={2.5} className="w-6 h-6 group-hover:scale-110 transition-transform" />
+                                            <div onClick={() => { setIsPricingMegaMenuOpen(false); navigate('/pricing/buyers'); }} className="bg-[#F8F9FE] p-5 md:p-6 rounded-[20px] cursor-pointer hover:bg-[#F2F4FC] transition-colors border border-transparent hover:border-brand-300 group flex flex-col h-full">
+                                                <div className="w-[44px] h-[44px] rounded-full bg-[#ECF1FF] flex items-center justify-center text-brand-900 mb-5 shadow-sm">
+                                                    <Star strokeWidth={2.5} className="w-5 h-5 group-hover:scale-110 transition-transform" />
                                                 </div>
-                                                <h3 className="text-xl font-extrabold text-[#111124] mb-3">Compradores</h3>
-                                                <p className="text-[#393A47] text-[15px] font-medium mb-3 leading-snug">Visualiza los planes para compradores que te conectan con fundadores reales.</p>
-                                                <p className="text-[#7A7B8B] text-[14px] italic">Conecta con dueños de empresas para iniciar una adquisición privada.</p>
+                                                <h3 className="text-[17px] font-extrabold text-[#111124] mb-2 leading-tight">Compradores</h3>
+                                                <p className="text-[#393A47] text-[13px] md:text-[14px] font-medium mb-3 leading-snug flex-grow">Visualiza los planes que te conectan con fundadores reales para vender.</p>
+                                                <p className="text-[#7A7B8B] text-[12px] italic mt-auto">Inicia una adquisición privada hoy.</p>
                                             </div>
                                         </div>
                                     </div>
