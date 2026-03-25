@@ -9,7 +9,8 @@ export default {
             colors: {
                 background: '#F8F9FE',
                 oxford: '#1F2024',
-                marine: '#1e3a8a',
+                marine: '#0065f6',
+                blue: { 900: '#004fc4' }, // darker shade for hover:bg-blue-900 used on buttons
                 brand: {
                     900: '#006FFD',
                     700: '#2897FF',
