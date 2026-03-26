@@ -26,7 +26,7 @@ exports.signup = async (req, res) => {
         res.status(201).json({ token, user: { email: user.email, role: user.role, isPremium: user.isPremium } });
     } catch (err) {
         console.error(err);
-        res.status(500).json({ message: 'Server error' });
+        res.status(500).json({ message: `Server error: ${err.message}` });
     }
 };
 
@@ -48,6 +48,6 @@ exports.login = async (req, res) => {
         res.json({ token, user: { email: user.email, role: user.role, isPremium: user.isPremium } });
     } catch (err) {
         console.error(err);
-        res.status(500).json({ message: 'Server error' });
+        res.status(500).json({ message: `Server error: ${err.message}` });
     }
 };
