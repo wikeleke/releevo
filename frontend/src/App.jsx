@@ -11,6 +11,9 @@ import Buyers from './pages/Buyers';
 import SellerPricing from './pages/SellerPricing';
 import BuyerPricing from './pages/BuyerPricing';
 import Valuation from './pages/Valuation';
+import CreateListing from './pages/CreateListing';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 
 function App() {
   return (
@@ -29,6 +32,9 @@ function App() {
             <Route path="/pricing/sellers" element={<SellerPricing />} />
             <Route path="/pricing/buyers" element={<BuyerPricing />} />
             <Route path="/valuation" element={<Valuation />} />
+            <Route path="/create-listing" element={<CreateListing />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password/:token" element={<ResetPassword />} />
           </Routes>
         </main>
         <Footer />

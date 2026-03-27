@@ -11,7 +11,12 @@ const businessRoutes = require('./routes/business');
 const app = express();
 
 // Middleware
-app.use(cors());
+// Open CORS configuration for testing with other apps and APIs
+app.use(cors({
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'Accept', 'X-Requested-With']
+}));
 app.use(express.json());
 
 // Connect to MongoDB
