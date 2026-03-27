@@ -1,11 +1,12 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
-import { AuthContext } from '../context/AuthContext';
+import { useAuth, useUser } from '@clerk/clerk-react';
 import { PlusCircle, Edit, CheckCircle, Clock, Trash2, ShieldCheck, DollarSign } from 'lucide-react';
 
 const Dashboard = () => {
-    const { user } = useContext(AuthContext);
+    const { isSignedIn } = useAuth();
+    const user = useUser();
     const navigate = useNavigate();
     const [businesses, setBusinesses] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -14,7 +15,7 @@ const Dashboard = () => {
 
 
     useEffect(() => {
-        if (!user) {
+        if (!isSignedIn) {
             navigate('/login');
             return;
         }
