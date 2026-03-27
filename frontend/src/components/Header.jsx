@@ -1,6 +1,7 @@
 import React, { useContext, useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { User, LogOut, Menu, ChevronDown, FilePlus, Handshake, Star } from 'lucide-react';
+import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/clerk-react";
 import { AuthContext } from '../context/AuthContext';
 
 const Header = () => {
@@ -202,44 +203,30 @@ const Header = () => {
                                         <div className="border-t border-light-300 my-2 mx-5"></div>
                                     </div>
 
-                                    {!user ? (
-                                        <>
-                                            <Link
-                                                to="/signup"
-                                                onClick={() => setIsMenuOpen(false)}
-                                                className="block px-6 py-3 text-[15px] font-bold text-[#3B3C4B] hover:bg-light-100 transition-colors"
-                                            >
-                                                Unirte ahora
-                                            </Link>
-                                            <Link
-                                                to="/login"
-                                                onClick={() => setIsMenuOpen(false)}
-                                                className="block px-6 py-3 text-[15px] font-medium text-[#7A7B8B] hover:bg-light-100 transition-colors"
-                                            >
-                                                Ingresar
-                                            </Link>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <div className="px-6 py-3 mb-2 border-b border-light-300">
-                                                <p className="text-[11px] font-bold text-dark-500 tracking-wider uppercase mb-0.5">Conectado como</p>
-                                                <p className="text-sm font-bold text-brand-900 truncate">{user.role}</p>
-                                            </div>
-                                            <Link
-                                                to="/dashboard"
-                                                onClick={() => setIsMenuOpen(false)}
-                                                className="block px-6 py-3 text-[15px] font-bold text-[#3B3C4B] hover:bg-light-100 transition-colors"
-                                            >
-                                                Dashboard
-                                            </Link>
+                                    <SignedOut>
+                                        <SignInButton mode="modal">
                                             <button
-                                                onClick={handleLogout}
-                                                className="w-full text-left px-6 py-3 text-[15px] font-medium text-red-600 hover:bg-red-50 transition-colors"
+                                                onClick={() => setIsMenuOpen(false)}
+                                                className="w-full text-left block px-6 py-3 text-[15px] font-bold text-[#3B3C4B] hover:bg-light-100 transition-colors"
                                             >
-                                                Cerrar sesión
+                                                Ingresar / Unirse
                                             </button>
-                                        </>
-                                    )}
+                                        </SignInButton>
+                                    </SignedOut>
+
+                                    <SignedIn>
+                                        <div className="px-6 py-3 border-b border-light-300 flex justify-between items-center">
+                                            <p className="text-[14px] font-bold text-dark-500 truncate mr-3">Mi cuenta</p>
+                                            <UserButton afterSignOutUrl="/" />
+                                        </div>
+                                        <Link
+                                            to="/dashboard"
+                                            onClick={() => setIsMenuOpen(false)}
+                                            className="block px-6 py-3 text-[15px] font-bold text-[#3B3C4B] hover:bg-light-100 transition-colors"
+                                        >
+                                            Dashboard
+                                        </Link>
+                                    </SignedIn>
 
                                     <div className="border-t border-light-300 my-2 mx-5"></div>
 

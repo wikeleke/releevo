@@ -3,6 +3,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const connectDB = require('./config/db');
+const { clerkMiddleware } = require('@clerk/express');
 
 // Route imports
 const authRoutes = require('./routes/auth');
@@ -11,6 +12,8 @@ const businessRoutes = require('./routes/business');
 const app = express();
 
 // Middleware
+app.use(clerkMiddleware());
+
 // Open CORS configuration for testing with other apps and APIs
 app.use(cors({
     origin: '*',
