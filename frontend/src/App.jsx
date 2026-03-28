@@ -1,4 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useAuth } from '@clerk/clerk-react';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Home from './pages/Home';
@@ -14,8 +16,15 @@ import Valuation from './pages/Valuation';
 import CreateListing from './pages/CreateListing';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
+import { setClerkGetToken } from './services/api';
 
 function App() {
+  const { getToken } = useAuth();
+
+  // Wire Clerk's getToken into the Axios interceptor so every API call is authenticated
+  useEffect(() => {
+    setClerkGetToken(getToken);
+  }, [getToken]);
   return (
     <Router>
       <div className="flex flex-col min-h-screen font-sans bg-background text-oxford">

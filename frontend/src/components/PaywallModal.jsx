@@ -1,12 +1,10 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { Lock, ShieldCheck, X } from 'lucide-react';
-import { AuthContext } from '../context/AuthContext';
 
 const PaywallModal = ({ onClose }) => {
-    const { simulatePremiumPayment } = useContext(AuthContext);
-
     const handleUpgrade = () => {
-        simulatePremiumPayment();
+        // TODO: Integrate with a real payment flow (e.g. Stripe)
+        alert('Premium upgrade will be available soon!');
         onClose();
     };
 
@@ -50,11 +48,11 @@ const PaywallModal = ({ onClose }) => {
                         className="w-full bg-marine text-white py-4 rounded-xl font-bold hover:bg-blue-900 transition-colors shadow-lg flex justify-center items-center group"
                     >
                         <Lock className="h-4 w-4 mr-2 group-hover:scale-110 transition-transform" />
-                        Unlock Full Info (Simulate Payment)
+                        Upgrade to Premium
                     </button>
 
                     <p className="text-center text-xs text-gray-400 mt-5">
-                        This action will upgrade your current account to Premium automatically for demo purposes.
+                        Premium plans start at $29/mo. Cancel anytime.
                     </p>
                 </div>
             </div>

@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
-import { useAuth, useUser } from '@clerk/clerk-react';
+import { useAuth, useUser, RedirectToSignIn } from '@clerk/clerk-react';
 import { PlusCircle, Edit, CheckCircle, Clock, Trash2, ShieldCheck, DollarSign } from 'lucide-react';
 
 const Dashboard = () => {
     const { isSignedIn } = useAuth();
     const user = useUser();
     const navigate = useNavigate();
+    if (!isSignedIn) {
+        return <RedirectToSignIn />;
+    }
     const [businesses, setBusinesses] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -15,12 +18,9 @@ const Dashboard = () => {
 
 
     useEffect(() => {
-        if (!isSignedIn) {
-            navigate('/login');
-            return;
-        }
+        // Fetch businesses when component mounts
         fetchDashboardBusinesses();
-    }, [user, navigate]);
+    }, []);
 
     const fetchDashboardBusinesses = async () => {
         try {

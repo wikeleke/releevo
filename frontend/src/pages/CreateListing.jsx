@@ -1,7 +1,7 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
-import { AuthContext } from '../context/AuthContext';
+import { useUser } from '@clerk/clerk-react';
 import { CheckCircle, ChevronRight, ChevronLeft, MapPin, Briefcase, DollarSign, ShieldCheck, FileText } from 'lucide-react';
 
 const steps = [
@@ -13,7 +13,7 @@ const steps = [
 ];
 
 const CreateListing = () => {
-    const { user } = useContext(AuthContext);
+    const { user } = useUser();
     const navigate = useNavigate();
     
     useEffect(() => {

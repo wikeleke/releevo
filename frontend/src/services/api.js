@@ -1,32 +1,40 @@
 import axios from 'axios';
 
+// Create an axios instance pointing to the backend API
 const api = axios.create({
-    baseURL: 'https://releevo.onrender.com/api',
+  baseURL: 'https://releevo.onrender.com/api',
 });
 
-api.interceptors.request.use(
-    async (config) => {
-        // Use Clerk token if available
-        if (window.Clerk && window.Clerk.session) {
-            try {
-                const clerkToken = await window.Clerk.session.getToken();
-                if (clerkToken) {
-                    config.headers.Authorization = `Bearer ${clerkToken}`;
-                    return config;
-                }
-            } catch (err) {
-                // Ignore, fallback to local storage
-            }
-        }
+// We store a reference to the Clerk getToken function so the interceptor can use it.
+// This is set by calling `setClerkGetToken` from a React component.
+let clerkGetToken = null;
 
-        // Fallback to legacy auth if Clerk is not active
-        const token = localStorage.getItem('token');
+export const setClerkGetToken = (fn) => {
+  clerkGetToken = fn;
+};
+
+// Attach a request interceptor that injects the Clerk JWT token when available
+api.interceptors.request.use(
+  async (config) => {
+    try {
+      if (clerkGetToken) {
+        const token = await clerkGetToken();
         if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
+          config.headers.Authorization = `Bearer ${token}`;
+          return config;
         }
-        return config;
-    },
-    (error) => Promise.reject(error)
+      }
+    } catch (e) {
+      // ignore errors, fallback to any legacy token
+    }
+    // Legacy fallback (if any token stored in localStorage)
+    const legacy = localStorage.getItem('token');
+    if (legacy) {
+      config.headers.Authorization = `Bearer ${legacy}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
 );
 
 export default api;

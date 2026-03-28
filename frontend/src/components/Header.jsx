@@ -1,11 +1,11 @@
-import React, { useContext, useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { User, LogOut, Menu, ChevronDown, FilePlus, Handshake, Star } from 'lucide-react';
-import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/clerk-react";
-import { AuthContext } from '../context/AuthContext';
+import { SignedIn, SignedOut, SignInButton, UserButton, useClerk, useUser } from "@clerk/clerk-react";
 
 const Header = () => {
-    const { user, logout } = useContext(AuthContext);
+    const { user } = useUser();
+    const { signOut } = useClerk();
     const navigate = useNavigate();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
@@ -15,8 +15,8 @@ const Header = () => {
     const megaMenuRef = useRef(null);
     const pricingMegaMenuRef = useRef(null);
 
-    const handleLogout = () => {
-        logout();
+    const handleLogout = async () => {
+        await signOut();
         setIsMenuOpen(false);
         navigate('/');
     };

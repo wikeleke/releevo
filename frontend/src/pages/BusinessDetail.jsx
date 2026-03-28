@@ -1,13 +1,13 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import api from '../services/api';
-import { AuthContext } from '../context/AuthContext';
+import { useUser } from '@clerk/clerk-react';
 import PaywallModal from '../components/PaywallModal';
 import { MapPin, Briefcase, TrendingUp, DollarSign, Lock, Mail, Phone, Globe, ChevronLeft } from 'lucide-react';
 
 const BusinessDetail = () => {
     const { slug } = useParams();
-    const { user } = useContext(AuthContext);
+    const { user } = useUser();
     const [business, setBusiness] = useState(null);
     const [loading, setLoading] = useState(true);
     const [showPaywall, setShowPaywall] = useState(false);
