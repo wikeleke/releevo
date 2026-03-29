@@ -5,12 +5,9 @@ import { useAuth, useUser, RedirectToSignIn } from '@clerk/clerk-react';
 import { PlusCircle, Edit, CheckCircle, Clock, Trash2, ShieldCheck, DollarSign } from 'lucide-react';
 
 const Dashboard = () => {
-    const { isSignedIn } = useAuth();
-    const user = useUser();
+    const { isLoaded, isSignedIn } = useAuth();
+    const { user } = useUser();
     const navigate = useNavigate();
-    if (!isSignedIn) {
-        return <RedirectToSignIn />;
-    }
     const [businesses, setBusinesses] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -18,17 +15,76 @@ const Dashboard = () => {
 
 
     useEffect(() => {
-        // Fetch businesses when component mounts
-        fetchDashboardBusinesses();
-    }, []);
+        let isMounted = true;
+
+        const fetchDashboardBusinesses = async () => {
+            try {
+                setLoading(true);
+                setError(null);
+                const { data } = await api.get('/business/dashboard', { timeout: 15000 });
+                if (isMounted) {
+                    setBusinesses(data);
+                }
+            } catch (err) {
+                if (!isMounted) return;
+                const status = err?.response?.status;
+                if (status === 403) {
+                    setError('Tu usuario no tiene acceso al dashboard de listados.');
+                } else if (status === 401) {
+                    setError('Tu sesión expiró. Vuelve a iniciar sesión.');
+                } else if (err?.code === 'ECONNABORTED') {
+                    setError('La solicitud tardó demasiado. Intenta de nuevo.');
+                } else {
+                    setError('No se pudo cargar el dashboard.');
+                }
+            } finally {
+                if (isMounted) {
+                    setLoading(false);
+                }
+            }
+        };
+
+        // Wait for Clerk to finish initializing before requesting protected data.
+        if (isLoaded && isSignedIn) {
+            fetchDashboardBusinesses();
+        } else if (isLoaded && !isSignedIn) {
+            setLoading(false);
+        }
+
+        return () => {
+            isMounted = false;
+        };
+    }, [isLoaded, isSignedIn]);
+
+    if (!isLoaded || loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-marine"></div>
+            </div>
+        );
+    }
+
+    if (!isSignedIn) {
+        return <RedirectToSignIn />;
+    }
 
     const fetchDashboardBusinesses = async () => {
         try {
             setLoading(true);
-            const { data } = await api.get('/business/dashboard');
+            setError(null);
+            const { data } = await api.get('/business/dashboard', { timeout: 15000 });
             setBusinesses(data);
         } catch (err) {
-            setError('Failed to fetch dashboard data');
+            const status = err?.response?.status;
+            if (status === 403) {
+                setError('Tu usuario no tiene acceso al dashboard de listados.');
+            } else if (status === 401) {
+                setError('Tu sesión expiró. Vuelve a iniciar sesión.');
+            } else if (err?.code === 'ECONNABORTED') {
+                setError('La solicitud tardó demasiado. Intenta de nuevo.');
+            } else {
+                setError('No se pudo cargar el dashboard.');
+            }
         } finally {
             setLoading(false);
         }
@@ -53,8 +109,6 @@ const Dashboard = () => {
             alert('Failed to update status');
         }
     };
-
-    if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-marine"></div></div>;
 
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">

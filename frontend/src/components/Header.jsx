@@ -1,10 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { User, LogOut, Menu, ChevronDown, FilePlus, Handshake, Star } from 'lucide-react';
-import { SignedIn, SignedOut, SignInButton, UserButton, useClerk, useUser } from "@clerk/clerk-react";
+import { SignedIn, SignedOut, SignInButton, useClerk } from "@clerk/clerk-react";
 
 const Header = () => {
-    const { user } = useUser();
     const { signOut } = useClerk();
     const navigate = useNavigate();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -16,9 +15,8 @@ const Header = () => {
     const pricingMegaMenuRef = useRef(null);
 
     const handleLogout = async () => {
-        await signOut();
+        await signOut({ redirectUrl: '/' });
         setIsMenuOpen(false);
-        navigate('/');
     };
 
     useEffect(() => {
@@ -217,7 +215,6 @@ const Header = () => {
                                     <SignedIn>
                                         <div className="px-6 py-3 border-b border-light-300 flex justify-between items-center">
                                             <p className="text-[14px] font-bold text-dark-500 truncate mr-3">Mi cuenta</p>
-                                            <UserButton afterSignOutUrl="/" />
                                         </div>
                                         <Link
                                             to="/dashboard"
@@ -226,6 +223,13 @@ const Header = () => {
                                         >
                                             Dashboard
                                         </Link>
+                                        <button
+                                            onClick={handleLogout}
+                                            className="w-full text-left px-6 py-3 text-[15px] font-bold text-[#3B3C4B] hover:bg-light-100 transition-colors flex items-center gap-2"
+                                        >
+                                            <LogOut className="w-4 h-4" />
+                                            Cerrar sesión
+                                        </button>
                                     </SignedIn>
 
                                     <div className="border-t border-light-300 my-2 mx-5"></div>
