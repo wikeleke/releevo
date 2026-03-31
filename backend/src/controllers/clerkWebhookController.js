@@ -44,8 +44,9 @@ const upsertFromClerkUser = async (clerkUser) => {
 };
 
 exports.handleClerkWebhook = async (req, res) => {
+  let event;
   try {
-    const secret = process.env.CLERK_WEBHOOK_SIGNING_SECRET;
+    const secret = (process.env.CLERK_WEBHOOK_SIGNING_SECRET || '').trim();
     if (!secret) {
       return res.status(500).json({ message: 'Missing CLERK_WEBHOOK_SIGNING_SECRET' });
     }
@@ -58,17 +59,27 @@ exports.handleClerkWebhook = async (req, res) => {
       return res.status(400).json({ message: 'Missing Svix headers' });
     }
 
-    const payload = req.body.toString('utf8');
+    const payload = Buffer.isBuffer(req.body) ? req.body.toString('utf8') : JSON.stringify(req.body || {});
     const wh = new Webhook(secret);
-    const event = wh.verify(payload, {
+    event = wh.verify(payload, {
       'svix-id': svixId,
       'svix-timestamp': svixTimestamp,
       'svix-signature': svixSignature,
     });
+  } catch (error) {
+    console.error('Clerk webhook signature verification error:', error);
+    return res.status(400).json({ message: 'Invalid Clerk webhook payload' });
+  }
 
+  try {
     const { type, data } = event;
 
     if (type === 'user.created' || type === 'user.updated') {
+      const email = getPrimaryEmail(data);
+      if (!email) {
+        // Some synthetic test payloads might not include email addresses.
+        return res.status(200).json({ ok: true, action: type, ignored: 'missing_email' });
+      }
       const user = await upsertFromClerkUser(data);
       return res.status(200).json({
         ok: true,
@@ -94,7 +105,7 @@ exports.handleClerkWebhook = async (req, res) => {
 
     return res.status(200).json({ ok: true, ignored: true, action: type });
   } catch (error) {
-    console.error('Clerk webhook error:', error);
-    return res.status(400).json({ message: 'Invalid Clerk webhook payload' });
+    console.error('Clerk webhook processing error:', error);
+    return res.status(500).json({ message: 'Clerk webhook processing failed' });
   }
 };

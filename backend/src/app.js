@@ -23,7 +23,7 @@ app.use(cors({
 }));
 
 // Clerk webhooks need raw body to validate signatures.
-app.use('/api/clerk/webhooks', express.raw({ type: 'application/json' }), clerkWebhookRoutes);
+app.use('/api/clerk/webhooks', express.raw({ type: '*/*' }), clerkWebhookRoutes);
 
 app.use(express.json());
 
