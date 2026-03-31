@@ -8,6 +8,7 @@ const { clerkMiddleware } = require('@clerk/express');
 // Route imports
 const authRoutes = require('./routes/auth');
 const businessRoutes = require('./routes/business');
+const clerkWebhookRoutes = require('./routes/clerkWebhook');
 
 const app = express();
 
@@ -20,6 +21,10 @@ app.use(cors({
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'Accept', 'X-Requested-With']
 }));
+
+// Clerk webhooks need raw body to validate signatures.
+app.use('/api/clerk/webhooks', express.raw({ type: 'application/json' }), clerkWebhookRoutes);
+
 app.use(express.json());
 
 // Connect to MongoDB
