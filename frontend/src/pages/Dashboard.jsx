@@ -12,6 +12,17 @@ const Dashboard = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+    const getTokenWithRetries = async (attempts = 5, delayMs = 700) => {
+        for (let attempt = 0; attempt < attempts; attempt++) {
+            const token = await getToken();
+            if (token) return token;
+            await wait(delayMs);
+        }
+        return null;
+    };
+
     const fetchDashboardBusinesses = async (options = {}) => {
         const { retryOnUnauthorized = true } = options;
 
@@ -19,8 +30,8 @@ const Dashboard = () => {
             setLoading(true);
             setError(null);
 
-            // Request a fresh session token right before calling protected backend routes.
-            const token = await getToken({ skipCache: true });
+            // OAuth flows can need a brief moment before JWT is ready on the client.
+            const token = await getTokenWithRetries();
             if (!token) {
                 throw new Error('TOKEN_UNAVAILABLE');
             }
@@ -43,7 +54,7 @@ const Dashboard = () => {
             if (status === 403) {
                 setError('Tu usuario no tiene acceso al dashboard de listados.');
             } else if (status === 401 || err?.message === 'TOKEN_UNAVAILABLE') {
-                setError('Tu sesión aún se está inicializando. Intenta de nuevo en unos segundos.');
+                setError('No se pudo validar tu sesión. Intenta recargar la página.');
             } else if (err?.code === 'ECONNABORTED') {
                 setError('La solicitud tardó demasiado. Intenta de nuevo.');
             } else {
