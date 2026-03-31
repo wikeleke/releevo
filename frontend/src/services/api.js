@@ -1,8 +1,14 @@
 import axios from 'axios';
 
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ||
+  (window.location.hostname === 'localhost'
+    ? 'http://localhost:5001/api'
+    : 'https://releevo.onrender.com/api');
+
 // Create an axios instance pointing to the backend API
 const api = axios.create({
-  baseURL: 'https://releevo.onrender.com/api',
+  baseURL: API_BASE_URL,
 });
 
 // We store a reference to the Clerk getToken function so the interceptor can use it.
@@ -18,19 +24,17 @@ api.interceptors.request.use(
   async (config) => {
     try {
       if (clerkGetToken) {
-        const token = await clerkGetToken();
+        // Request a fresh session token first; fallback to cached if needed.
+        let token = await clerkGetToken({ skipCache: true });
+        if (!token) {
+          token = await clerkGetToken();
+        }
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
-          return config;
         }
       }
-    } catch (e) {
-      // ignore errors, fallback to any legacy token
-    }
-    // Legacy fallback (if any token stored in localStorage)
-    const legacy = localStorage.getItem('token');
-    if (legacy) {
-      config.headers.Authorization = `Bearer ${legacy}`;
+    } catch (error) {
+      // Continue without auth header if token retrieval fails.
     }
     return config;
   },

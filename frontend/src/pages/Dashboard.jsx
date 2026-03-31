@@ -5,7 +5,7 @@ import { useAuth, useUser, RedirectToSignIn } from '@clerk/clerk-react';
 import { PlusCircle, Edit, CheckCircle, Clock, Trash2, ShieldCheck, DollarSign } from 'lucide-react';
 
 const Dashboard = () => {
-    const { isLoaded, isSignedIn } = useAuth();
+    const { isLoaded, isSignedIn, getToken } = useAuth();
     const { user } = useUser();
     const navigate = useNavigate();
     const [businesses, setBusinesses] = useState([]);
@@ -23,7 +23,9 @@ const Dashboard = () => {
 
             for (let attempt = 0; attempt < attempts; attempt++) {
                 try {
+                    const token = await getToken({ skipCache: true });
                     const { data } = await api.get('/business/dashboard', {
+                        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
                         // Render cold starts can exceed 15s after inactivity.
                         timeout: 45000,
                     });

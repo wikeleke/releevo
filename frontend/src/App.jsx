@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useLayoutEffect } from 'react';
 import { useAuth } from '@clerk/clerk-react';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -30,7 +30,9 @@ function App() {
   const { getToken } = useAuth();
 
   // Wire Clerk's getToken into the Axios interceptor so every API call is authenticated
-  useEffect(() => {
+  useLayoutEffect(() => {
+    // Remove legacy JWT leftover from old auth implementation.
+    localStorage.removeItem('token');
     setClerkGetToken(getToken);
   }, [getToken]);
   return (

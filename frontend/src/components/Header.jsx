@@ -22,6 +22,7 @@ const Header = () => {
         'Mi cuenta';
 
     const handleLogout = async () => {
+        localStorage.removeItem('token');
         await signOut({ redirectUrl: '/' });
         setIsMenuOpen(false);
     };
