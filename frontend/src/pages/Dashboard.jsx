@@ -24,7 +24,7 @@ const Dashboard = () => {
     };
 
     const fetchDashboardBusinesses = async (options = {}) => {
-        const { retryOnUnauthorized = true } = options;
+        const { retryOnUnauthorized = true, retryOnTimeout = true } = options;
 
         try {
             setLoading(true);
@@ -37,7 +37,8 @@ const Dashboard = () => {
             }
 
             const { data } = await api.get('/business/dashboard', {
-                timeout: 15000,
+                // Render cold starts can exceed 15s after inactivity.
+                timeout: 45000,
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -50,13 +51,17 @@ const Dashboard = () => {
             if (status === 401 && retryOnUnauthorized) {
                 return fetchDashboardBusinesses({ retryOnUnauthorized: false });
             }
+            if (err?.code === 'ECONNABORTED' && retryOnTimeout) {
+                await wait(1200);
+                return fetchDashboardBusinesses({ retryOnUnauthorized, retryOnTimeout: false });
+            }
 
             if (status === 403) {
                 setError('Tu usuario no tiene acceso al dashboard de listados.');
             } else if (status === 401 || err?.message === 'TOKEN_UNAVAILABLE') {
                 setError('No se pudo validar tu sesión. Intenta recargar la página.');
             } else if (err?.code === 'ECONNABORTED') {
-                setError('La solicitud tardó demasiado. Intenta de nuevo.');
+                setError('El servidor tardó en responder. Intenta de nuevo en unos segundos.');
             } else {
                 setError('No se pudo cargar el dashboard.');
             }
