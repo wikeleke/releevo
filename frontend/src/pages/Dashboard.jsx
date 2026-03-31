@@ -5,7 +5,7 @@ import { useAuth, useUser, RedirectToSignIn } from '@clerk/clerk-react';
 import { PlusCircle, Edit, CheckCircle, Clock, Trash2, ShieldCheck, DollarSign } from 'lucide-react';
 
 const Dashboard = () => {
-    const { isLoaded, isSignedIn, getToken } = useAuth();
+    const { isLoaded, isSignedIn } = useAuth();
     const { user } = useUser();
     const navigate = useNavigate();
     const [businesses, setBusinesses] = useState([]);
@@ -14,51 +14,39 @@ const Dashboard = () => {
 
     const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-    const getTokenWithRetries = async (attempts = 5, delayMs = 700) => {
-        for (let attempt = 0; attempt < attempts; attempt++) {
-            const token = await getToken();
-            if (token) return token;
-            await wait(delayMs);
-        }
-        return null;
-    };
-
     const fetchDashboardBusinesses = async (options = {}) => {
-        const { retryOnUnauthorized = true, retryOnTimeout = true } = options;
+        const { attempts = 4 } = options;
 
         try {
             setLoading(true);
             setError(null);
 
-            // OAuth flows can need a brief moment before JWT is ready on the client.
-            const token = await getTokenWithRetries();
-            if (!token) {
-                throw new Error('TOKEN_UNAVAILABLE');
-            }
+            for (let attempt = 0; attempt < attempts; attempt++) {
+                try {
+                    const { data } = await api.get('/business/dashboard', {
+                        // Render cold starts can exceed 15s after inactivity.
+                        timeout: 45000,
+                    });
+                    setBusinesses(data);
+                    return;
+                } catch (err) {
+                    const status = err?.response?.status;
+                    const isLastAttempt = attempt === attempts - 1;
 
-            const { data } = await api.get('/business/dashboard', {
-                // Render cold starts can exceed 15s after inactivity.
-                timeout: 45000,
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-            setBusinesses(data);
+                    // Retry transient auth propagation/timeouts after OAuth login.
+                    if (!isLastAttempt && (status === 401 || err?.code === 'ECONNABORTED')) {
+                        await wait(1200);
+                        continue;
+                    }
+                    throw err;
+                }
+            }
         } catch (err) {
             const status = err?.response?.status;
 
-            // Google/OAuth login can briefly race token propagation; retry once.
-            if (status === 401 && retryOnUnauthorized) {
-                return fetchDashboardBusinesses({ retryOnUnauthorized: false });
-            }
-            if (err?.code === 'ECONNABORTED' && retryOnTimeout) {
-                await wait(1200);
-                return fetchDashboardBusinesses({ retryOnUnauthorized, retryOnTimeout: false });
-            }
-
             if (status === 403) {
                 setError('Tu usuario no tiene acceso al dashboard de listados.');
-            } else if (status === 401 || err?.message === 'TOKEN_UNAVAILABLE') {
+            } else if (status === 401) {
                 setError('No se pudo validar tu sesión. Intenta recargar la página.');
             } else if (err?.code === 'ECONNABORTED') {
                 setError('El servidor tardó en responder. Intenta de nuevo en unos segundos.');
