@@ -31,7 +31,7 @@ const BusinessDetail = () => {
     if (error) return <div className="text-center mt-20 text-red-600 font-medium">{error}</div>;
     if (!business) return <div className="text-center mt-20 font-medium text-gray-500">Business not found.</div>;
 
-    const isPremium = user?.isPremium;
+    const canViewConfidential = Boolean(business?.canViewConfidential || user?.isPremium);
     const isOwner = user?._id === business.sellerId?._id; // optional check
 
     return (
@@ -52,7 +52,7 @@ const BusinessDetail = () => {
                         </span>
                     </div>
                     <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 leading-tight">
-                        {isPremium && business.confidentialData?.businessName ? business.confidentialData.businessName : business.title}
+                        {canViewConfidential && business.confidentialData?.businessName ? business.confidentialData.businessName : business.title}
                     </h1>
                     <div className="flex flex-wrap gap-6 text-blue-100 font-medium mt-6">
                         <div className="flex items-center">
@@ -80,10 +80,10 @@ const BusinessDetail = () => {
                         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden relative">
                             <div className="px-8 py-5 border-b border-gray-100 flex justify-between items-center bg-gray-50/80">
                                 <h2 className="text-xl font-bold text-oxford flex items-center tracking-tight">
-                                    <Lock className={`h-5 w-5 mr-3 ${isPremium ? 'text-green-500' : 'text-yellow-500'}`} />
+                                    <Lock className={`h-5 w-5 mr-3 ${canViewConfidential ? 'text-green-500' : 'text-yellow-500'}`} />
                                     Confidential Details
                                 </h2>
-                                {!isPremium && (
+                                {!canViewConfidential && (
                                     <button
                                         onClick={() => setShowPaywall(true)}
                                         className="text-sm font-bold bg-yellow-100 text-yellow-800 px-4 py-2 rounded-lg hover:bg-yellow-200 transition-colors shadow-sm"
@@ -94,7 +94,7 @@ const BusinessDetail = () => {
                             </div>
 
                             <div className="p-8">
-                                {isPremium && business.confidentialData ? (
+                                {canViewConfidential && business.confidentialData ? (
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                                         <div>
                                             <div className="text-sm text-gray-500 mb-1.5 font-medium flex items-center"><Briefcase className="h-4 w-4 mr-2" /> Legal Name</div>
@@ -186,7 +186,7 @@ const BusinessDetail = () => {
                             </div>
                             <button
                                 onClick={() => {
-                                    if (!isPremium) setShowPaywall(true);
+                                    if (!canViewConfidential) setShowPaywall(true);
                                     else alert("Contacting seller functionality would open here.");
                                 }}
                                 className={`w-full mt-8 py-4 rounded-xl font-bold shadow-md transition-all flex justify-center items-center ${business.status === 'sold' ? 'bg-gray-100 text-gray-400 cursor-not-allowed shadow-none' : 'bg-marine text-white hover:bg-blue-900 active:scale-95'}`}

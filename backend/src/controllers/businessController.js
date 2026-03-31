@@ -56,7 +56,7 @@ exports.getBusinesses = async (req, res) => {
     }
 };
 
-// @desc    Get business detail (public fields always, confidential if premium)
+// @desc    Get business detail (public fields always, confidential if premium/admin)
 // @route   GET /api/business/:slug
 // @access  Public (premium guard inside)
 exports.getBusinessDetail = async (req, res) => {
@@ -75,8 +75,14 @@ exports.getBusinessDetail = async (req, res) => {
             financials: business.financials,
             status: business.status,
         };
-        // If user is premium, attach confidential data
-        if (req.user && req.user.isPremium) {
+
+        const canViewConfidential = Boolean(
+            req.user && (req.user.isPremium || req.user.role === 'admin')
+        );
+        response.canViewConfidential = canViewConfidential;
+
+        // Premium users and admins can always view confidential listing details.
+        if (canViewConfidential) {
             response.confidentialData = business.confidentialData;
         }
         res.json(response);
