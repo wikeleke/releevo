@@ -5,55 +5,61 @@ import { useAuth, useUser, RedirectToSignIn } from '@clerk/clerk-react';
 import { PlusCircle, Edit, CheckCircle, Clock, Trash2, ShieldCheck, DollarSign } from 'lucide-react';
 
 const Dashboard = () => {
-    const { isLoaded, isSignedIn } = useAuth();
+    const { isLoaded, isSignedIn, getToken } = useAuth();
     const { user } = useUser();
     const navigate = useNavigate();
     const [businesses, setBusinesses] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    const fetchDashboardBusinesses = async (options = {}) => {
+        const { retryOnUnauthorized = true } = options;
 
+        try {
+            setLoading(true);
+            setError(null);
+
+            // Request a fresh session token right before calling protected backend routes.
+            const token = await getToken({ skipCache: true });
+            if (!token) {
+                throw new Error('TOKEN_UNAVAILABLE');
+            }
+
+            const { data } = await api.get('/business/dashboard', {
+                timeout: 15000,
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            setBusinesses(data);
+        } catch (err) {
+            const status = err?.response?.status;
+
+            // Google/OAuth login can briefly race token propagation; retry once.
+            if (status === 401 && retryOnUnauthorized) {
+                return fetchDashboardBusinesses({ retryOnUnauthorized: false });
+            }
+
+            if (status === 403) {
+                setError('Tu usuario no tiene acceso al dashboard de listados.');
+            } else if (status === 401 || err?.message === 'TOKEN_UNAVAILABLE') {
+                setError('Tu sesión aún se está inicializando. Intenta de nuevo en unos segundos.');
+            } else if (err?.code === 'ECONNABORTED') {
+                setError('La solicitud tardó demasiado. Intenta de nuevo.');
+            } else {
+                setError('No se pudo cargar el dashboard.');
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        let isMounted = true;
-
-        const fetchDashboardBusinesses = async () => {
-            try {
-                setLoading(true);
-                setError(null);
-                const { data } = await api.get('/business/dashboard', { timeout: 15000 });
-                if (isMounted) {
-                    setBusinesses(data);
-                }
-            } catch (err) {
-                if (!isMounted) return;
-                const status = err?.response?.status;
-                if (status === 403) {
-                    setError('Tu usuario no tiene acceso al dashboard de listados.');
-                } else if (status === 401) {
-                    setError('Tu sesión expiró. Vuelve a iniciar sesión.');
-                } else if (err?.code === 'ECONNABORTED') {
-                    setError('La solicitud tardó demasiado. Intenta de nuevo.');
-                } else {
-                    setError('No se pudo cargar el dashboard.');
-                }
-            } finally {
-                if (isMounted) {
-                    setLoading(false);
-                }
-            }
-        };
-
-        // Wait for Clerk to finish initializing before requesting protected data.
         if (isLoaded && isSignedIn) {
             fetchDashboardBusinesses();
         } else if (isLoaded && !isSignedIn) {
             setLoading(false);
         }
-
-        return () => {
-            isMounted = false;
-        };
     }, [isLoaded, isSignedIn]);
 
     if (!isLoaded || loading) {
@@ -67,28 +73,6 @@ const Dashboard = () => {
     if (!isSignedIn) {
         return <RedirectToSignIn />;
     }
-
-    const fetchDashboardBusinesses = async () => {
-        try {
-            setLoading(true);
-            setError(null);
-            const { data } = await api.get('/business/dashboard', { timeout: 15000 });
-            setBusinesses(data);
-        } catch (err) {
-            const status = err?.response?.status;
-            if (status === 403) {
-                setError('Tu usuario no tiene acceso al dashboard de listados.');
-            } else if (status === 401) {
-                setError('Tu sesión expiró. Vuelve a iniciar sesión.');
-            } else if (err?.code === 'ECONNABORTED') {
-                setError('La solicitud tardó demasiado. Intenta de nuevo.');
-            } else {
-                setError('No se pudo cargar el dashboard.');
-            }
-        } finally {
-            setLoading(false);
-        }
-    };
 
 
 
