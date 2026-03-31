@@ -7,6 +7,8 @@
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
     "seed": "node seed.js",
+    "rotate-passwords": "node rotate-passwords.js",
+    "sync-clerk-users": "node sync-clerk-users.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

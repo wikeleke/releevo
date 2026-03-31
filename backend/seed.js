@@ -11,16 +11,16 @@ const randBetween = (min, max) => Math.round((Math.random() * (max - min) + min)
 
 // ── 10 Users ──
 const users = [
-  { email: 'admin@releevo.com', password: 'Admin1234!', role: 'admin', isPremium: true },
-  { email: 'superadmin@releevo.com', password: 'Admin1234!', role: 'admin', isPremium: true },
-  { email: 'seller1@releevo.com', password: 'Seller1234!', role: 'seller', isPremium: false },
-  { email: 'seller2@releevo.com', password: 'Seller1234!', role: 'seller', isPremium: true },
-  { email: 'seller3@releevo.com', password: 'Seller1234!', role: 'seller', isPremium: false },
-  { email: 'seller4@releevo.com', password: 'Seller1234!', role: 'seller', isPremium: true },
-  { email: 'seller5@releevo.com', password: 'Seller1234!', role: 'seller', isPremium: false },
-  { email: 'buyer1@releevo.com', password: 'Buyer1234!', role: 'buyer', isPremium: false },
-  { email: 'buyer2@releevo.com', password: 'Buyer1234!', role: 'buyer', isPremium: true },
-  { email: 'buyer3@releevo.com', password: 'Buyer1234!', role: 'buyer', isPremium: false },
+  { email: 'admin@releevo.com', password: 'Rv!A9kLm#27Qp', role: 'admin', isPremium: true },
+  { email: 'superadmin@releevo.com', password: 'Rv!S8dTy$64Mn', role: 'admin', isPremium: true },
+  { email: 'seller1@releevo.com', password: 'Rv!Se1#Qw73Lp', role: 'seller', isPremium: false },
+  { email: 'seller2@releevo.com', password: 'Rv!Se2$Zx58Kt', role: 'seller', isPremium: true },
+  { email: 'seller3@releevo.com', password: 'Rv!Se3%Vb91Hr', role: 'seller', isPremium: false },
+  { email: 'seller4@releevo.com', password: 'Rv!Se4&Nm46Dj', role: 'seller', isPremium: true },
+  { email: 'seller5@releevo.com', password: 'Rv!Se5*Gt82Cx', role: 'seller', isPremium: false },
+  { email: 'buyer1@releevo.com', password: 'Rv!By1#Lq74Wp', role: 'buyer', isPremium: false },
+  { email: 'buyer2@releevo.com', password: 'Rv!By2$Fr69Zd', role: 'buyer', isPremium: true },
+  { email: 'buyer3@releevo.com', password: 'Rv!By3%Hp53Xs', role: 'buyer', isPremium: false },
 ];
 
 const sellerEmails = users.filter(u => u.role === 'seller').map(u => u.email);
@@ -203,9 +203,16 @@ async function seed() {
     console.log(`   Businesses: ${bizData.length} (${counts.published} published, ${counts.pending} pending, ${counts.sold} sold)`);
     console.log('───────────────────────────────────');
     console.log('\n📋 Credentials:');
-    console.log('   Admin:   admin@releevo.com       / Admin1234!');
-    console.log('   Sellers: seller[1-5]@releevo.com / Seller1234!');
-    console.log('   Buyers:  buyer[1-3]@releevo.com  / Buyer1234!');
+    console.log('   admin@releevo.com        / Rv!A9kLm#27Qp');
+    console.log('   superadmin@releevo.com   / Rv!S8dTy$64Mn');
+    console.log('   seller1@releevo.com      / Rv!Se1#Qw73Lp');
+    console.log('   seller2@releevo.com      / Rv!Se2$Zx58Kt');
+    console.log('   seller3@releevo.com      / Rv!Se3%Vb91Hr');
+    console.log('   seller4@releevo.com      / Rv!Se4&Nm46Dj');
+    console.log('   seller5@releevo.com      / Rv!Se5*Gt82Cx');
+    console.log('   buyer1@releevo.com       / Rv!By1#Lq74Wp');
+    console.log('   buyer2@releevo.com       / Rv!By2$Fr69Zd');
+    console.log('   buyer3@releevo.com       / Rv!By3%Hp53Xs');
   } catch (err) {
     console.error('❌ Seed error:', err);
   } finally {
