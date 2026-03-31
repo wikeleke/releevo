@@ -17,7 +17,7 @@ const CreateListing = () => {
     const navigate = useNavigate();
     
     useEffect(() => {
-        if (!user || user.role !== 'seller') {
+        if (!user || (user.role !== 'seller' && user.role !== 'admin')) {
             navigate('/dashboard');
         }
     }, [user, navigate]);

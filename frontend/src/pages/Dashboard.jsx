@@ -108,12 +108,12 @@ const Dashboard = () => {
                     <p className="text-gray-500 mt-1">Manage your business listings and account.</p>
                 </div>
 
-                {user?.role === 'seller' && (
+                {(user?.role === 'seller' || user?.role === 'admin') && (
                     <button
                         onClick={() => navigate('/create-listing')}
                         className="flex items-center px-4 py-2 bg-marine text-white rounded-lg font-bold hover:bg-blue-900 transition-colors shadow-sm"
                     >
-                        <PlusCircle className="mr-2 h-5 w-5" /> Add New Listing
+                        <PlusCircle className="mr-2 h-5 w-5" /> Listar tu Negocio
                     </button>
                 )}
             </div>

@@ -21,8 +21,8 @@ router.get('/dashboard', protect, getDashboardBusinesses);
 router.get('/', getBusinesses);
 router.get('/:slug', protect, getBusinessDetail); // protect to get user info for premium check
 
-// Seller routes
-router.post('/', protect, roleCheck(['seller']), createBusiness);
+// Seller/Admin routes
+router.post('/', protect, roleCheck(['seller', 'admin']), createBusiness);
 router.put('/:id/paylisting', protect, roleCheck(['seller']), payListing);
 
 // Admin routes
