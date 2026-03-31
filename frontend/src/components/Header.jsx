@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { User, LogOut, Menu, ChevronDown, FilePlus, Handshake, Star } from 'lucide-react';
-import { SignedIn, SignedOut, SignInButton, useClerk } from "@clerk/clerk-react";
+import { SignedIn, SignedOut, SignInButton, useClerk, useUser } from "@clerk/clerk-react";
 
 const Header = () => {
     const { signOut } = useClerk();
+    const { user } = useUser();
     const navigate = useNavigate();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
@@ -13,6 +14,12 @@ const Header = () => {
     const menuRef = useRef(null);
     const megaMenuRef = useRef(null);
     const pricingMegaMenuRef = useRef(null);
+    const userDisplayName =
+        user?.fullName ||
+        user?.firstName ||
+        user?.username ||
+        user?.primaryEmailAddress?.emailAddress?.split('@')[0] ||
+        'Mi cuenta';
 
     const handleLogout = async () => {
         await signOut({ redirectUrl: '/' });
@@ -158,6 +165,11 @@ const Header = () => {
                                 className="flex items-center justify-center gap-3 px-2 py-1.5 bg-[#F7F8FC] border border-[#2B2B43] rounded-full hover:shadow-md transition-shadow focus:outline-none"
                             >
                                 <Menu className="w-5 h-5 text-dark-900 ml-2" />
+                                <SignedIn>
+                                    <span className="hidden md:block text-[13px] font-bold text-dark-700 max-w-[120px] truncate">
+                                        {userDisplayName}
+                                    </span>
+                                </SignedIn>
                                 <div className="bg-[#D3E4FF] w-9 h-9 rounded-full flex items-center justify-center">
                                     <User className="w-5 h-5 text-[#19192D]" fill="currentColor" />
                                 </div>
@@ -202,7 +214,7 @@ const Header = () => {
                                     </div>
 
                                     <SignedOut>
-                                        <SignInButton mode="modal">
+                                        <SignInButton mode="modal" forceRedirectUrl="/dashboard" signUpForceRedirectUrl="/dashboard">
                                             <button
                                                 onClick={() => setIsMenuOpen(false)}
                                                 className="w-full text-left block px-6 py-3 text-[15px] font-bold text-[#3B3C4B] hover:bg-light-100 transition-colors"
@@ -214,7 +226,7 @@ const Header = () => {
 
                                     <SignedIn>
                                         <div className="px-6 py-3 border-b border-light-300 flex justify-between items-center">
-                                            <p className="text-[14px] font-bold text-dark-500 truncate mr-3">Mi cuenta</p>
+                                            <p className="text-[14px] font-bold text-dark-500 truncate mr-3">{userDisplayName}</p>
                                         </div>
                                         <Link
                                             to="/dashboard"

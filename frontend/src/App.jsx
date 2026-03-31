@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useAuth } from '@clerk/clerk-react';
 import Header from './components/Header';
@@ -18,6 +18,14 @@ import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import { setClerkGetToken } from './services/api';
 
+function HomeOrDashboard() {
+  const { isLoaded, isSignedIn } = useAuth();
+
+  if (!isLoaded) return <Home />;
+  if (isSignedIn) return <Navigate to="/dashboard" replace />;
+  return <Home />;
+}
+
 function App() {
   const { getToken } = useAuth();
 
@@ -31,7 +39,7 @@ function App() {
         <Header />
         <main className="flex-grow">
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<HomeOrDashboard />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/marketplace" element={<Marketplace />} />
