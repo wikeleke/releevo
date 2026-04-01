@@ -32,6 +32,14 @@ const BusinessDetail = () => {
     if (!business) return <div className="text-center mt-20 font-medium text-gray-500">Business not found.</div>;
 
     const canViewConfidential = Boolean(business?.canViewConfidential || user?.isPremium);
+    const confidentialData = business?.confidentialData || {};
+    const hasConfidentialData = Boolean(
+        confidentialData.businessName ||
+        confidentialData.exactAddress ||
+        confidentialData.contactPhone ||
+        confidentialData.contactEmail ||
+        confidentialData.website
+    );
     const isOwner = user?._id === business.sellerId?._id; // optional check
 
     return (
@@ -52,7 +60,7 @@ const BusinessDetail = () => {
                         </span>
                     </div>
                     <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 leading-tight">
-                        {canViewConfidential && business.confidentialData?.businessName ? business.confidentialData.businessName : business.title}
+                        {canViewConfidential && confidentialData.businessName ? confidentialData.businessName : business.title}
                     </h1>
                     <div className="flex flex-wrap gap-6 text-blue-100 font-medium mt-6">
                         <div className="flex items-center">
@@ -94,33 +102,39 @@ const BusinessDetail = () => {
                             </div>
 
                             <div className="p-8">
-                                {canViewConfidential && business.confidentialData ? (
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-                                        <div>
-                                            <div className="text-sm text-gray-500 mb-1.5 font-medium flex items-center"><Briefcase className="h-4 w-4 mr-2" /> Legal Name</div>
-                                            <div className="font-bold text-gray-900 text-lg">{business.confidentialData.businessName}</div>
-                                        </div>
-                                        <div>
-                                            <div className="text-sm text-gray-500 mb-1.5 font-medium flex items-center"><MapPin className="h-4 w-4 mr-2" /> Exact Address</div>
-                                            <div className="font-bold text-gray-900 text-lg">{business.confidentialData.exactAddress}</div>
-                                        </div>
-                                        <div>
-                                            <div className="text-sm text-gray-500 mb-1.5 font-medium flex items-center"><Phone className="h-4 w-4 mr-2" /> Phone Number</div>
-                                            <div className="font-bold text-gray-900 text-lg">{business.confidentialData.contactPhone}</div>
-                                        </div>
-                                        <div>
-                                            <div className="text-sm text-gray-500 mb-1.5 font-medium flex items-center"><Mail className="h-4 w-4 mr-2" /> Contact Email</div>
-                                            <div className="font-bold text-marine hover:underline cursor-pointer text-lg">{business.confidentialData.contactEmail}</div>
-                                        </div>
-                                        {business.confidentialData.website && (
-                                            <div className="sm:col-span-2 border-t border-gray-100 pt-6 mt-2">
-                                                <div className="text-sm text-gray-500 mb-1.5 font-medium flex items-center"><Globe className="h-4 w-4 mr-2" /> Official Website</div>
-                                                <a href={business.confidentialData.website} target="_blank" rel="noopener noreferrer" className="font-bold text-marine hover:underline text-lg">
-                                                    {business.confidentialData.website}
-                                                </a>
+                                {canViewConfidential ? (
+                                    hasConfidentialData ? (
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                                            <div>
+                                                <div className="text-sm text-gray-500 mb-1.5 font-medium flex items-center"><Briefcase className="h-4 w-4 mr-2" /> Legal Name</div>
+                                                <div className="font-bold text-gray-900 text-lg">{confidentialData.businessName || 'Not provided'}</div>
                                             </div>
-                                        )}
-                                    </div>
+                                            <div>
+                                                <div className="text-sm text-gray-500 mb-1.5 font-medium flex items-center"><MapPin className="h-4 w-4 mr-2" /> Exact Address</div>
+                                                <div className="font-bold text-gray-900 text-lg">{confidentialData.exactAddress || 'Not provided'}</div>
+                                            </div>
+                                            <div>
+                                                <div className="text-sm text-gray-500 mb-1.5 font-medium flex items-center"><Phone className="h-4 w-4 mr-2" /> Phone Number</div>
+                                                <div className="font-bold text-gray-900 text-lg">{confidentialData.contactPhone || 'Not provided'}</div>
+                                            </div>
+                                            <div>
+                                                <div className="text-sm text-gray-500 mb-1.5 font-medium flex items-center"><Mail className="h-4 w-4 mr-2" /> Contact Email</div>
+                                                <div className="font-bold text-marine text-lg">{confidentialData.contactEmail || 'Not provided'}</div>
+                                            </div>
+                                            {confidentialData.website && (
+                                                <div className="sm:col-span-2 border-t border-gray-100 pt-6 mt-2">
+                                                    <div className="text-sm text-gray-500 mb-1.5 font-medium flex items-center"><Globe className="h-4 w-4 mr-2" /> Official Website</div>
+                                                    <a href={confidentialData.website} target="_blank" rel="noopener noreferrer" className="font-bold text-marine hover:underline text-lg">
+                                                        {confidentialData.website}
+                                                    </a>
+                                                </div>
+                                            )}
+                                        </div>
+                                    ) : (
+                                        <div className="rounded-xl border border-blue-100 bg-blue-50 p-6 text-blue-900">
+                                            No confidential details have been provided for this listing yet.
+                                        </div>
+                                    )
                                 ) : (
                                     <div className="relative border border-gray-100 rounded-xl overflow-hidden bg-white">
                                         <div className="filter blur-[6px] opacity-40 p-6 pointer-events-none select-none">
