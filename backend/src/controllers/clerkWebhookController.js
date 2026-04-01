@@ -91,14 +91,9 @@ const upsertFromClerkUser = async (clerkUser) => {
     return user;
   }
 
+  // Mongo is the source of truth for role/premium. Webhooks only keep identity linked.
   user.clerkId = clerkId;
   user.email = email;
-  if (shouldUpdateRole(user.role, role)) {
-    user.role = role;
-  }
-  if (isPremium !== null) {
-    user.isPremium = isPremium;
-  }
   await user.save();
   return user;
 };
