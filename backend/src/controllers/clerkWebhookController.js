@@ -4,6 +4,29 @@ const User = require('../models/User');
 
 const randomPassword = () => `clerk_${crypto.randomBytes(24).toString('hex')}`;
 
+const normalizeRole = (rawRole) => {
+  if (typeof rawRole !== 'string') return null;
+  const role = rawRole.trim().toLowerCase();
+  return ['admin', 'seller', 'buyer'].includes(role) ? role : null;
+};
+
+const parseBoolean = (value) => {
+  if (typeof value === 'boolean') return value;
+  if (typeof value === 'string') {
+    if (value.toLowerCase() === 'true') return true;
+    if (value.toLowerCase() === 'false') return false;
+  }
+  return null;
+};
+
+const getRoleAndPremium = (clerkUser) => {
+  const metadata = clerkUser?.public_metadata || {};
+  return {
+    role: normalizeRole(metadata?.role) || 'buyer',
+    isPremium: parseBoolean(metadata?.isPremium) ?? false,
+  };
+};
+
 const getPrimaryEmail = (clerkUser) => {
   const emailAddresses = clerkUser?.email_addresses || [];
   const primaryId = clerkUser?.primary_email_address_id;
@@ -14,6 +37,7 @@ const getPrimaryEmail = (clerkUser) => {
 const upsertFromClerkUser = async (clerkUser) => {
   const clerkId = clerkUser.id;
   const email = getPrimaryEmail(clerkUser);
+  const { role, isPremium } = getRoleAndPremium(clerkUser);
 
   if (!email) {
     throw new Error(`Missing email for Clerk user ${clerkId}`);
@@ -30,8 +54,8 @@ const upsertFromClerkUser = async (clerkUser) => {
       clerkId,
       email,
       password: randomPassword(),
-      role: 'buyer',
-      isPremium: false,
+      role,
+      isPremium,
     });
     await user.save();
     return user;
@@ -39,6 +63,8 @@ const upsertFromClerkUser = async (clerkUser) => {
 
   user.clerkId = clerkId;
   user.email = email;
+  user.role = role;
+  user.isPremium = isPremium;
   await user.save();
   return user;
 };
