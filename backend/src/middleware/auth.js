@@ -8,13 +8,16 @@ const normalizeRole = (rawRole) => {
     return ['admin', 'seller', 'buyer'].includes(role) ? role : null;
 };
 
-const shouldUpdateRole = (currentRole, nextRole) => {
+const shouldUpdateRole = (currentRoleRaw, nextRoleRaw) => {
+    const currentRole = normalizeRole(currentRoleRaw);
+    const nextRole = normalizeRole(nextRoleRaw);
     if (!nextRole || currentRole === nextRole) return false;
-    // Prevent accidental privilege downgrades when Clerk role metadata is missing/incomplete.
-    if ((currentRole === 'admin' || currentRole === 'seller') && nextRole === 'buyer') {
-        return false;
-    }
-    return true;
+
+    // Role source of truth is Mongo; only allow role upgrades from Clerk.
+    if (!currentRole) return true;
+    if (currentRole === 'buyer' && (nextRole === 'seller' || nextRole === 'admin')) return true;
+    if (currentRole === 'seller' && nextRole === 'admin') return true;
+    return false;
 };
 
 const parseBoolean = (value) => {
