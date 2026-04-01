@@ -2,6 +2,11 @@
 const Business = require('../models/Business');
 const slugify = require('slugify');
 
+const normalizeRole = (rawRole) => {
+    if (typeof rawRole !== 'string') return '';
+    return rawRole.trim().toLowerCase();
+};
+
 // @desc    Create new business listing (seller only)
 // @route   POST /api/business
 // @access  Private (seller)
@@ -76,9 +81,8 @@ exports.getBusinessDetail = async (req, res) => {
             status: business.status,
         };
 
-        const canViewConfidential = Boolean(
-            req.user && (req.user.isPremium || req.user.role === 'admin')
-        );
+        const role = normalizeRole(req.user?.role);
+        const canViewConfidential = Boolean(req.user && (req.user.isPremium || role === 'admin'));
         response.canViewConfidential = canViewConfidential;
 
         // Premium users and admins can always view confidential listing details.
@@ -129,9 +133,10 @@ exports.payListing = async (req, res) => {
 exports.getDashboardBusinesses = async (req, res) => {
     try {
         let filter = {};
-        if (req.user.role === 'seller') {
+        const role = normalizeRole(req.user?.role);
+        if (role === 'seller') {
             filter.sellerId = req.user._id;
-        } else if (req.user.role === 'buyer') {
+        } else if (role === 'buyer') {
             return res.status(403).json({ message: 'Buyers do not have listings' });
         }
         const businesses = await Business.find(filter).sort({ createdAt: -1 });

@@ -137,6 +137,14 @@ const protectUser = async (req, res, next) => {
 
         // Keep local role/premium in sync with Clerk metadata if available in session claims.
         let changed = false;
+
+        // Normalize persisted role in case it was edited manually with casing/spacing.
+        const normalizedExistingRole = normalizeRole(user.role);
+        if (normalizedExistingRole && user.role !== normalizedExistingRole) {
+            user.role = normalizedExistingRole;
+            changed = true;
+        }
+
         if (shouldUpdateRole(user.role, claimMetadata.role)) {
             user.role = claimMetadata.role;
             changed = true;
