@@ -10,6 +10,15 @@ const normalizeRole = (rawRole) => {
   return ['admin', 'seller', 'buyer'].includes(role) ? role : null;
 };
 
+const shouldUpdateRole = (currentRole, nextRole) => {
+  if (!nextRole || currentRole === nextRole) return false;
+  // Prevent accidental privilege downgrades when Clerk metadata is incomplete/defaulted.
+  if ((currentRole === 'admin' || currentRole === 'seller') && nextRole === 'buyer') {
+    return false;
+  }
+  return true;
+};
+
 const parseBoolean = (value) => {
   if (typeof value === 'boolean') return value;
   if (typeof value === 'string') {
@@ -20,10 +29,28 @@ const parseBoolean = (value) => {
 };
 
 const getRoleAndPremium = (clerkUser) => {
-  const metadata = clerkUser?.public_metadata || {};
+  const metadataSources = [
+    clerkUser?.public_metadata,
+    clerkUser?.publicMetadata,
+    clerkUser?.private_metadata,
+    clerkUser?.privateMetadata,
+    clerkUser?.unsafe_metadata,
+    clerkUser?.unsafeMetadata,
+  ];
+
+  const roleCandidate = [
+    clerkUser?.role,
+    ...metadataSources.map((metadata) => metadata?.role),
+  ].find((value) => normalizeRole(value));
+
+  const premiumCandidate = [
+    clerkUser?.isPremium,
+    ...metadataSources.map((metadata) => metadata?.isPremium),
+  ].find((value) => parseBoolean(value) !== null);
+
   return {
-    role: normalizeRole(metadata?.role) || 'buyer',
-    isPremium: parseBoolean(metadata?.isPremium) ?? false,
+    role: normalizeRole(roleCandidate),
+    isPremium: parseBoolean(premiumCandidate),
   };
 };
 
@@ -54,8 +81,8 @@ const upsertFromClerkUser = async (clerkUser) => {
       clerkId,
       email,
       password: randomPassword(),
-      role,
-      isPremium,
+      role: role || 'buyer',
+      isPremium: isPremium ?? false,
     });
     await user.save();
     return user;
@@ -63,8 +90,12 @@ const upsertFromClerkUser = async (clerkUser) => {
 
   user.clerkId = clerkId;
   user.email = email;
-  user.role = role;
-  user.isPremium = isPremium;
+  if (shouldUpdateRole(user.role, role)) {
+    user.role = role;
+  }
+  if (isPremium !== null) {
+    user.isPremium = isPremium;
+  }
   await user.save();
   return user;
 };

@@ -8,6 +8,15 @@ const normalizeRole = (rawRole) => {
     return ['admin', 'seller', 'buyer'].includes(role) ? role : null;
 };
 
+const shouldUpdateRole = (currentRole, nextRole) => {
+    if (!nextRole || currentRole === nextRole) return false;
+    // Prevent accidental privilege downgrades when Clerk role metadata is missing/incomplete.
+    if ((currentRole === 'admin' || currentRole === 'seller') && nextRole === 'buyer') {
+        return false;
+    }
+    return true;
+};
+
 const parseBoolean = (value) => {
     if (typeof value === 'boolean') return value;
     if (typeof value === 'string') {
@@ -18,22 +27,55 @@ const parseBoolean = (value) => {
 };
 
 const getMetadataFromClaims = (sessionClaims) => {
-    const metadata =
-        sessionClaims?.metadata ||
-        sessionClaims?.public_metadata ||
-        sessionClaims?.publicMetadata ||
-        {};
+    const metadataSources = [
+        sessionClaims?.metadata,
+        sessionClaims?.public_metadata,
+        sessionClaims?.publicMetadata,
+        sessionClaims?.private_metadata,
+        sessionClaims?.privateMetadata,
+        sessionClaims?.unsafe_metadata,
+        sessionClaims?.unsafeMetadata,
+    ];
+
+    const roleCandidate = [
+        sessionClaims?.role,
+        ...metadataSources.map((metadata) => metadata?.role),
+    ].find((value) => normalizeRole(value));
+
+    const premiumCandidate = [
+        sessionClaims?.isPremium,
+        ...metadataSources.map((metadata) => metadata?.isPremium),
+    ].find((value) => parseBoolean(value) !== null);
+
     return {
-        role: normalizeRole(metadata?.role),
-        isPremium: parseBoolean(metadata?.isPremium),
+        role: normalizeRole(roleCandidate),
+        isPremium: parseBoolean(premiumCandidate),
     };
 };
 
 const getMetadataFromClerkUser = (clerkUser) => {
-    const metadata = clerkUser?.publicMetadata || clerkUser?.public_metadata || {};
+    const metadataSources = [
+        clerkUser?.publicMetadata,
+        clerkUser?.public_metadata,
+        clerkUser?.privateMetadata,
+        clerkUser?.private_metadata,
+        clerkUser?.unsafeMetadata,
+        clerkUser?.unsafe_metadata,
+    ];
+
+    const roleCandidate = [
+        clerkUser?.role,
+        ...metadataSources.map((metadata) => metadata?.role),
+    ].find((value) => normalizeRole(value));
+
+    const premiumCandidate = [
+        clerkUser?.isPremium,
+        ...metadataSources.map((metadata) => metadata?.isPremium),
+    ].find((value) => parseBoolean(value) !== null);
+
     return {
-        role: normalizeRole(metadata?.role),
-        isPremium: parseBoolean(metadata?.isPremium),
+        role: normalizeRole(roleCandidate),
+        isPremium: parseBoolean(premiumCandidate),
     };
 };
 
@@ -78,7 +120,7 @@ const protectUser = async (req, res, next) => {
             user = await User.findOne({ email });
             if (user) {
                 user.clerkId = clerkId;
-                if (claimMetadata.role) user.role = claimMetadata.role;
+                if (shouldUpdateRole(user.role, claimMetadata.role)) user.role = claimMetadata.role;
                 if (claimMetadata.isPremium !== null) user.isPremium = claimMetadata.isPremium;
                 await user.save();
             } else {
@@ -95,7 +137,7 @@ const protectUser = async (req, res, next) => {
 
         // Keep local role/premium in sync with Clerk metadata if available in session claims.
         let changed = false;
-        if (claimMetadata.role && user.role !== claimMetadata.role) {
+        if (shouldUpdateRole(user.role, claimMetadata.role)) {
             user.role = claimMetadata.role;
             changed = true;
         }
@@ -108,7 +150,7 @@ const protectUser = async (req, res, next) => {
         if (!changed && !claimMetadata.role && claimMetadata.isPremium === null) {
             const clerkUser = await clerkClient.users.getUser(clerkId);
             const remoteMetadata = getMetadataFromClerkUser(clerkUser);
-            if (remoteMetadata.role && user.role !== remoteMetadata.role) {
+            if (shouldUpdateRole(user.role, remoteMetadata.role)) {
                 user.role = remoteMetadata.role;
                 changed = true;
             }
