@@ -133,11 +133,11 @@ const Valuation = () => {
                     <div className="bg-white rounded-[32px] p-8 md:p-12 shadow-[0_10px_30px_rgba(0,0,0,0.03)] border border-light-300">
                         <FAQItem
                             question="¿Qué metodología usa la calculadora de valuación?"
-                            answer="Nuestra calculadora de valuación se basa primordialmente en la metodología de 'Valuación por Múltiplos' (Típicamente usando EBITDA o Revenue), la cual es preferida abrumadoramente por Family Offices, Fondos de Capital Privado (PE) y buscadores tradicionales de M&A al evaluar compañías maduras en México."
+                            answer="Nuestra calculadora de valuacion se basa primordialmente en la metodologia de 'Valuacion por multiplos' (tipicamente usando EBITDA o ingresos), la cual es preferida por oficinas familiares, fondos de capital privado y buscadores tradicionales de fusiones y adquisiciones al evaluar companias maduras en Mexico."
                         />
                         <FAQItem
                             question="¿Qué tan certera es esta calculadora de negocios?"
-                            answer="Nos estima un rango muy sólido de valuaciones usando tendencias transaccionales reales registradas en Releevo, sin embargo, ninguna herramienta puede sustituir un análisis contable financiero detallado o Appraisals Profesionales. Usa este rango como una guía poderosa para fijar tu precio y negociar con asertividad."
+                            answer="Nos estima un rango muy solido de valuaciones usando tendencias transaccionales reales registradas en Releevo; sin embargo, ninguna herramienta puede sustituir un analisis contable financiero detallado o una valuacion profesional. Usa este rango como una guia poderosa para fijar tu precio y negociar con asertividad."
                         />
                         <FAQItem
                             question="¿Por qué obtengo un rango de valuación y no un número preciso?"

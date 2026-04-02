@@ -19,18 +19,18 @@ const FilterSidebar = ({ filters, setFilters, applyFilters }) => {
 
     return (
         <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm sticky top-24">
-            <h3 className="text-xl font-extrabold text-oxford mb-5 tracking-tight">Filters</h3>
+            <h3 className="text-xl font-extrabold text-oxford mb-5 tracking-tight">Filtros</h3>
 
             <div className="space-y-5">
                 <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-1.5">City</label>
+                    <label className="block text-sm font-bold text-gray-700 mb-1.5">Ciudad</label>
                     <input
                         type="text"
                         name="city"
                         value={filters.city || ''}
                         onChange={handleChange}
                         onKeyDown={handleKeyDown}
-                        placeholder="e.g. Mexico City"
+                        placeholder="Ej. Ciudad de Mexico"
                         className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-marine focus:bg-white text-sm transition-all"
                     />
                 </div>
@@ -43,19 +43,19 @@ const FilterSidebar = ({ filters, setFilters, applyFilters }) => {
                         onChange={handleChange}
                         className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-marine focus:bg-white text-sm transition-all appearance-none cursor-pointer"
                     >
-                        <option value="">All Sectors</option>
-                        <option value="Retail">Retail</option>
-                        <option value="Food & Beverage">Food & Beverage</option>
-                        <option value="Technology">Technology</option>
-                        <option value="Services">Services</option>
-                        <option value="Manufacturing">Manufacturing</option>
-                        <option value="Healthcare">Healthcare</option>
-                        <option value="Real Estate">Real Estate</option>
+                        <option value="">Todos los sectores</option>
+                        <option value="Retail">Comercio minorista</option>
+                        <option value="Food & Beverage">Alimentos y bebidas</option>
+                        <option value="Technology">Tecnologia</option>
+                        <option value="Services">Servicios</option>
+                        <option value="Manufacturing">Manufactura</option>
+                        <option value="Healthcare">Salud</option>
+                        <option value="Real Estate">Bienes raices</option>
                     </select>
                 </div>
 
                 <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-1.5">Price Range (USD)</label>
+                    <label className="block text-sm font-bold text-gray-700 mb-1.5">Rango de precio (USD)</label>
                     <div className="flex items-center space-x-3">
                         <input
                             type="number"
@@ -83,7 +83,7 @@ const FilterSidebar = ({ filters, setFilters, applyFilters }) => {
                     onClick={handleApply}
                     className="w-full bg-marine text-white mt-8 py-3 rounded-lg font-bold hover:bg-blue-900 focus:ring-2 focus:ring-offset-2 focus:ring-marine transition-all shadow-sm"
                 >
-                    Apply Filters
+                    Aplicar filtros
                 </button>
             </div>
         </div>

@@ -1,14 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
-import { useAuth, useUser, RedirectToSignIn } from '@clerk/clerk-react';
+import { useAuth, RedirectToSignIn } from '@clerk/clerk-react';
 import { PlusCircle, Edit, CheckCircle, Clock, Trash2, ShieldCheck, DollarSign } from 'lucide-react';
+
+const statusLabel = (status) => {
+    const normalized = String(status || '').toLowerCase();
+    if (normalized === 'published') return 'publicado';
+    if (normalized === 'pending') return 'pendiente';
+    if (normalized === 'sold') return 'vendido';
+    return status;
+};
 
 const Dashboard = () => {
     const { isLoaded, isSignedIn, getToken } = useAuth();
-    const { user } = useUser();
     const navigate = useNavigate();
     const [businesses, setBusinesses] = useState([]);
+    const [currentRole, setCurrentRole] = useState('');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -29,7 +37,10 @@ const Dashboard = () => {
                         // Render cold starts can exceed 15s after inactivity.
                         timeout: 45000,
                     });
-                    setBusinesses(data);
+                    const roleFromApi = data?.role;
+                    const businessesFromApi = Array.isArray(data) ? data : (data?.businesses || []);
+                    setCurrentRole(typeof roleFromApi === 'string' ? roleFromApi : '');
+                    setBusinesses(businessesFromApi);
                     return;
                 } catch (err) {
                     const status = err?.response?.status;
@@ -53,7 +64,7 @@ const Dashboard = () => {
             } else if (err?.code === 'ECONNABORTED') {
                 setError('El servidor tardó en responder. Intenta de nuevo en unos segundos.');
             } else {
-                setError('No se pudo cargar el dashboard.');
+                setError('No se pudo cargar el panel.');
             }
         } finally {
             setLoading(false);
@@ -87,7 +98,7 @@ const Dashboard = () => {
             await api.put(`/business/${id}/paylisting`);
             fetchDashboardBusinesses();
         } catch (err) {
-            alert('Failed to process payment');
+            alert('No se pudo procesar el pago');
         }
     };
 
@@ -96,7 +107,7 @@ const Dashboard = () => {
             await api.put(`/business/${id}/status`, { status });
             fetchDashboardBusinesses();
         } catch (err) {
-            alert('Failed to update status');
+            alert('No se pudo actualizar el estado');
         }
     };
 
@@ -104,11 +115,11 @@ const Dashboard = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
             <div className="flex justify-between items-center mb-8">
                 <div>
-                    <h1 className="text-3xl font-extrabold text-oxford tracking-tight">Dashboard</h1>
-                    <p className="text-gray-500 mt-1">Manage your business listings and account.</p>
+                    <h1 className="text-3xl font-extrabold text-oxford tracking-tight">Panel de control</h1>
+                    <p className="text-gray-500 mt-1">Administra tus listados y tu cuenta.</p>
                 </div>
 
-                {(user?.role === 'seller' || user?.role === 'admin') && (
+                {(currentRole === 'seller' || currentRole === 'admin') && (
                     <button
                         onClick={() => navigate('/create-listing')}
                         className="flex items-center px-4 py-2 bg-marine text-white rounded-lg font-bold hover:bg-blue-900 transition-colors shadow-sm"
@@ -122,11 +133,11 @@ const Dashboard = () => {
 
 
             {/* Existing Listings */}
-            <h2 className="text-2xl font-bold text-oxford mb-6">{user?.role === 'admin' ? 'All Platform Listings' : 'My Listings'}</h2>
+            <h2 className="text-2xl font-bold text-oxford mb-6">{currentRole === 'admin' ? 'Todos los listados de la plataforma' : 'Mis listados'}</h2>
 
             {businesses.length === 0 ? (
                 <div className="bg-white rounded-2xl p-12 text-center border border-dashed border-gray-300">
-                    <p className="text-gray-500 text-lg">You don't have any business listings yet.</p>
+                    <p className="text-gray-500 text-lg">Aun no tienes negocios listados.</p>
                 </div>
             ) : (
                 <div className="overflow-hidden bg-white shadow-sm rounded-2xl border border-gray-200">
@@ -141,50 +152,50 @@ const Dashboard = () => {
                                             <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider ${biz.status === 'published' ? 'bg-green-100 text-green-800' :
                                                     biz.status === 'sold' ? 'bg-gray-100 text-gray-800' : 'bg-yellow-100 text-yellow-800'
                                                 }`}>
-                                                {biz.status}
+                                                {statusLabel(biz.status)}
                                             </span>
                                             {biz.isListingPaid && (
                                                 <span className="flex items-center text-xs font-bold text-green-600 bg-green-50 px-2.5 py-0.5 rounded-full border border-green-200">
-                                                    <DollarSign className="w-3 h-3 mr-1" /> Fee Paid
+                                                    <DollarSign className="w-3 h-3 mr-1" /> Tarifa pagada
                                                 </span>
                                             )}
                                         </div>
                                         <div className="text-sm text-gray-500 mb-2">
                                             ${biz.financials?.askingPrice?.toLocaleString()} • {biz.location?.city}, {biz.location?.state}
                                         </div>
-                                        {user?.role === 'admin' && (
+                                        {currentRole === 'admin' && (
                                             <div className="text-xs text-gray-400">
-                                                Seller ID: {biz.sellerId}
+                                                ID del vendedor: {biz.sellerId}
                                             </div>
                                         )}
                                     </div>
 
                                     {/* Actions */}
                                     <div className="flex flex-wrap items-center gap-3">
-                                        {user?.role === 'seller' && !biz.isListingPaid && biz.status === 'pending' && (
+                                        {currentRole === 'seller' && !biz.isListingPaid && biz.status === 'pending' && (
                                             <button
                                                 onClick={() => handlePayListing(biz._id)}
                                                 className="flex items-center px-4 py-2 bg-green-600 text-white text-sm font-bold rounded-lg hover:bg-green-700 transition"
                                             >
-                                                <DollarSign className="w-4 h-4 mr-1" /> Pay Listing Fee
+                                                <DollarSign className="w-4 h-4 mr-1" /> Pagar tarifa de listado
                                             </button>
                                         )}
 
-                                        {user?.role === 'admin' && biz.status === 'pending' && (
+                                        {currentRole === 'admin' && biz.status === 'pending' && (
                                             <button
                                                 onClick={() => handleUpdateStatus(biz._id, 'published')}
                                                 className="flex items-center px-4 py-2 bg-green-600 text-white text-sm font-bold rounded-lg hover:bg-green-700 transition"
                                             >
-                                                <CheckCircle className="w-4 h-4 mr-1" /> Approve & Publish
+                                                <CheckCircle className="w-4 h-4 mr-1" /> Aprobar y publicar
                                             </button>
                                         )}
 
-                                        {user?.role === 'admin' && biz.status === 'published' && (
+                                        {currentRole === 'admin' && biz.status === 'published' && (
                                             <button
                                                 onClick={() => handleUpdateStatus(biz._id, 'sold')}
                                                 className="flex items-center px-4 py-2 bg-gray-600 text-white text-sm font-bold rounded-lg hover:bg-gray-700 transition"
                                             >
-                                                <CheckCircle className="w-4 h-4 mr-1" /> Mark as Sold
+                                                <CheckCircle className="w-4 h-4 mr-1" /> Marcar como vendido
                                             </button>
                                         )}
 
@@ -192,7 +203,7 @@ const Dashboard = () => {
                                             onClick={() => navigate(`/business/${biz.slug}`)}
                                             className="px-4 py-2 border border-gray-300 text-gray-700 text-sm font-bold rounded-lg hover:bg-gray-100 transition"
                                         >
-                                            View Live
+                                            Ver publicación
                                         </button>
                                     </div>
                                 </div>

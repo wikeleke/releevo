@@ -103,7 +103,7 @@ const Buyers = () => {
                                 Con la membresía para compradores, ganas acceso a listados completamente filtrados e información exlusiva de dueños de pymes en el país. Ya seas un inversor primerizo o un profesional de private equity, confía en Releevo para ejecutar transacciones serias.
                             </p>
                             <Link to="/signup" className="inline-flex items-center px-8 py-4 font-bold text-[#111124] bg-brand-300/30 border border-brand-300 rounded-full hover:bg-brand-100 transition-colors">
-                                Volverte miembro Premium <ArrowRight className="ml-2 h-5 w-5" />
+                                Volverte miembro avanzado <ArrowRight className="ml-2 h-5 w-5" />
                             </Link>
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">

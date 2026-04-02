@@ -2,6 +2,18 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { MapPin, Briefcase, TrendingUp } from 'lucide-react';
 
+const categoryLabel = (category) => {
+    const value = String(category || '').toLowerCase();
+    if (value === 'retail') return 'Comercio minorista';
+    if (value === 'food & beverage') return 'Alimentos y bebidas';
+    if (value === 'services') return 'Servicios';
+    if (value === 'technology') return 'Tecnologia';
+    if (value === 'manufacturing') return 'Manufactura';
+    if (value === 'healthcare') return 'Salud';
+    if (value === 'real estate') return 'Bienes raices';
+    return category;
+};
+
 const BusinessCard = ({ business }) => {
     return (
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
@@ -11,7 +23,7 @@ const BusinessCard = ({ business }) => {
                         {business.title}
                     </h3>
                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                        {business.category}
+                        {categoryLabel(business.category)}
                     </span>
                 </div>
 
@@ -30,7 +42,7 @@ const BusinessCard = ({ business }) => {
                     </div>
                     <div className="flex items-center text-sm font-semibold text-green-600 truncate">
                         <TrendingUp className="h-4 w-4 mr-2 flex-shrink-0" />
-                        Asking: ${business.financials?.askingPrice?.toLocaleString()}
+                        Precio solicitado: ${business.financials?.askingPrice?.toLocaleString()}
                     </div>
                 </div>
 
@@ -38,7 +50,7 @@ const BusinessCard = ({ business }) => {
                     to={`/business/${business.slug}`}
                     className="block w-full text-center bg-gray-50 text-marine border border-gray-200 hover:bg-gray-100 font-medium py-2 px-4 rounded-lg transition-colors"
                 >
-                    View Details
+                    Ver detalles
                 </Link>
             </div>
         </div>

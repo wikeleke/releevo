@@ -67,7 +67,7 @@ const BuyerPricing = () => {
                                 </div>
                                 <h3 className="text-3xl font-extrabold text-white mb-4">Membresía Comprador</h3>
                                 <p className="text-[#8E8FA3] font-medium mb-8 pb-8 border-b border-white/10 min-h-[80px]">
-                                    Diseñado para adquirentes serios, profesionales (Private Equity / Family Offices) e inversionistas independientes.
+                                    Disenado para adquirentes serios, profesionales de capital privado y oficinas familiares, asi como inversionistas independientes.
                                 </p>
 
                                 <div className="text-[48px] font-black text-white mb-2 leading-none">
@@ -139,7 +139,7 @@ const BuyerPricing = () => {
                             </div>
                             <div>
                                 <h4 className="text-2xl font-bold text-[#111124] mb-3">Únete a una comunidad VIP</h4>
-                                <p className="text-[#5E5F70] leading-relaxed font-medium">Interactúa con dueños de portafolios de inversión, co-invierte en empresas grandes y mantén un networking con los profesionales del Private Equity en México.</p>
+                                <p className="text-[#5E5F70] leading-relaxed font-medium">Interactua con duenos de portafolios de inversion, co-invierte en empresas grandes y manten una red de contactos con profesionales del capital privado en Mexico.</p>
                             </div>
                         </div>
 
@@ -148,8 +148,8 @@ const BuyerPricing = () => {
                                 <GraduationCap strokeWidth={2.5} className="w-7 h-7" />
                             </div>
                             <div>
-                                <h4 className="text-2xl font-bold text-[#111124] mb-3">Acceso a "Releevo Academy"</h4>
-                                <p className="text-[#5E5F70] leading-relaxed font-medium">Aprende realmente a estructurar LBOs (compras apalancadas), buscar y valuar oportunidades para construir riqueza mediante nuestras Masterclasses exclusivas en M&A.</p>
+                                <h4 className="text-2xl font-bold text-[#111124] mb-3">Acceso a "Academia Releevo"</h4>
+                                <p className="text-[#5E5F70] leading-relaxed font-medium">Aprende a estructurar compras apalancadas, buscar y valuar oportunidades para construir riqueza mediante nuestras clases magistrales exclusivas en fusiones y adquisiciones.</p>
                             </div>
                         </div>
                     </div>

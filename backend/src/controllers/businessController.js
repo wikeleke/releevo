@@ -140,7 +140,10 @@ exports.getDashboardBusinesses = async (req, res) => {
             return res.status(403).json({ message: 'Buyers do not have listings' });
         }
         const businesses = await Business.find(filter).sort({ createdAt: -1 });
-        res.json(businesses);
+        res.json({
+            role,
+            businesses,
+        });
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Server error' });

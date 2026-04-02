@@ -15,11 +15,11 @@ const ForgotPassword = () => {
             setStatus('loading');
             const { data } = await api.post('/auth/forgotpassword', { email });
             setMessage(data.message);
-            // In a real app with SMTP, you wouldn't return the demoLink, but for our local demo we do
+            // En una app real con SMTP no se devuelve demoLink; aqui se usa para demo local.
             if (data.demoLink) setDemoLink(data.demoLink); 
             setStatus('success');
         } catch (err) {
-            setMessage(err.response?.data?.message || 'Failed to process request');
+            setMessage(err.response?.data?.message || 'No se pudo procesar la solicitud');
             setStatus('error');
         }
     };
@@ -29,7 +29,7 @@ const ForgotPassword = () => {
             <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 border border-gray-100 relative">
                 <div className="mb-4">
                     <Link to="/login" className="inline-flex items-center text-sm font-bold text-gray-500 hover:text-marine transition-colors">
-                        <ArrowLeft className="w-4 h-4 mr-1" /> Back to login
+                        <ArrowLeft className="w-4 h-4 mr-1" /> Volver a iniciar sesion
                     </Link>
                 </div>
 
@@ -37,9 +37,9 @@ const ForgotPassword = () => {
                     <div className={`inline-flex justify-center items-center w-16 h-16 rounded-full mb-4 ${status === 'success' ? 'bg-green-50' : 'bg-blue-50'}`}>
                         {status === 'success' ? <CheckCircle className="w-8 h-8 text-green-500" /> : <Mail className="w-8 h-8 text-marine" />}
                     </div>
-                    <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">Forgot password?</h2>
+                    <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">Olvidaste tu contrasena?</h2>
                     <p className="mt-2 text-sm text-gray-600">
-                        No worries, we'll send you reset instructions.
+                        No te preocupes, te enviaremos instrucciones para restablecerla.
                     </p>
                 </div>
 
@@ -50,14 +50,14 @@ const ForgotPassword = () => {
                         </div>
                         {demoLink && (
                             <div className="bg-blue-50 border border-blue-200 p-4 rounded-xl mb-6 text-left">
-                                <p className="text-sm text-blue-800 font-bold mb-2">Development Demo Environment</p>
-                                <p className="text-xs text-blue-600 mb-3">Since email setup is mocked for development, here is your auto-generated reset link:</p>
+                                <p className="text-sm text-blue-800 font-bold mb-2">Entorno de demo para desarrollo</p>
+                                <p className="text-xs text-blue-600 mb-3">Como el envio de correos esta simulado, aqui tienes el enlace generado para restablecer:</p>
                                 <Link to={demoLink} className="inline-block w-full text-center py-2 px-4 bg-marine text-white text-sm font-bold rounded-lg hover:bg-blue-900 transition-colors">
-                                    Click here to reset password (Demo)
+                                    Haz clic aqui para restablecer contrasena (Demo)
                                 </Link>
                             </div>
                         )}
-                        <p className="text-sm text-gray-500">Didn't receive the email? <button onClick={() => setStatus('idle')} className="text-marine font-bold hover:underline">Click to resend</button></p>
+                        <p className="text-sm text-gray-500">No recibiste el correo? <button onClick={() => setStatus('idle')} className="text-marine font-bold hover:underline">Haz clic para reenviar</button></p>
                     </div>
                 ) : (
                     <form className="space-y-6" onSubmit={handleSubmit}>
@@ -68,7 +68,7 @@ const ForgotPassword = () => {
                         )}
 
                         <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-1.5" htmlFor="email">Email address</label>
+                            <label className="block text-sm font-bold text-gray-700 mb-1.5" htmlFor="email">Correo electronico</label>
                             <input
                                 id="email"
                                 type="email"
@@ -76,7 +76,7 @@ const ForgotPassword = () => {
                                 className="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-marine focus:border-marine sm:text-sm transition-colors"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                placeholder="you@example.com"
+                                placeholder="tu@correo.com"
                                 disabled={status === 'loading'}
                             />
                         </div>
@@ -88,7 +88,7 @@ const ForgotPassword = () => {
                                 ${status === 'loading' ? 'bg-blue-300 cursor-not-allowed' : 'bg-marine hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-marine'}
                             `}
                         >
-                            {status === 'loading' ? 'Sending...' : 'Reset Password'}
+                            {status === 'loading' ? 'Enviando...' : 'Restablecer contrasena'}
                         </button>
                     </form>
                 )}

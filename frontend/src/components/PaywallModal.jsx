@@ -4,7 +4,7 @@ import { Lock, ShieldCheck, X } from 'lucide-react';
 const PaywallModal = ({ onClose }) => {
     const handleUpgrade = () => {
         // TODO: Integrate with a real payment flow (e.g. Stripe)
-        alert('Premium upgrade will be available soon!');
+        alert('La mejora a membresia avanzada estara disponible pronto.');
         onClose();
     };
 
@@ -23,23 +23,23 @@ const PaywallModal = ({ onClose }) => {
                     <div className="w-20 h-20 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-5 backdrop-blur-md relative z-10">
                         <Lock className="h-10 w-10 text-white" />
                     </div>
-                    <h2 className="text-2xl font-extrabold mb-2 relative z-10 tracking-tight">Premium Access Required</h2>
-                    <p className="text-blue-100/90 font-medium relative z-10">Unlock confidential business data</p>
+                    <h2 className="text-2xl font-extrabold mb-2 relative z-10 tracking-tight">Se requiere acceso avanzado</h2>
+                    <p className="text-blue-100/90 font-medium relative z-10">Desbloquea datos confidenciales del negocio</p>
                 </div>
 
                 <div className="p-8">
                     <ul className="space-y-4 mb-8">
                         <li className="flex items-start">
                             <ShieldCheck className="h-5 w-5 text-green-500 mr-3 flex-shrink-0 mt-0.5" />
-                            <span className="text-gray-700 font-medium">View actual business legal name</span>
+                            <span className="text-gray-700 font-medium">Ver el nombre legal real del negocio</span>
                         </li>
                         <li className="flex items-start">
                             <ShieldCheck className="h-5 w-5 text-green-500 mr-3 flex-shrink-0 mt-0.5" />
-                            <span className="text-gray-700 font-medium">Access exact street address</span>
+                            <span className="text-gray-700 font-medium">Acceder a la direccion exacta</span>
                         </li>
                         <li className="flex items-start">
                             <ShieldCheck className="h-5 w-5 text-green-500 mr-3 flex-shrink-0 mt-0.5" />
-                            <span className="text-gray-700 font-medium">Get direct owner contact details</span>
+                            <span className="text-gray-700 font-medium">Obtener datos directos de contacto del dueno</span>
                         </li>
                     </ul>
 
@@ -48,11 +48,11 @@ const PaywallModal = ({ onClose }) => {
                         className="w-full bg-marine text-white py-4 rounded-xl font-bold hover:bg-blue-900 transition-colors shadow-lg flex justify-center items-center group"
                     >
                         <Lock className="h-4 w-4 mr-2 group-hover:scale-110 transition-transform" />
-                        Upgrade to Premium
+                        Mejorar membresia
                     </button>
 
                     <p className="text-center text-xs text-gray-400 mt-5">
-                        Premium plans start at $29/mo. Cancel anytime.
+                        Los planes avanzados inician desde $29/mes. Cancela en cualquier momento.
                     </p>
                 </div>
             </div>

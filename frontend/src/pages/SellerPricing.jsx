@@ -208,7 +208,7 @@ const SellerPricing = () => {
                                 </div>
                                 <div className="border border-white/10 p-6 rounded-2xl bg-white/5 backdrop-blur-sm">
                                     <Check className="text-brand-300 w-8 h-8 mb-4" />
-                                    <h4 className="text-white font-bold text-lg mb-2">Private Equity Match</h4>
+                                    <h4 className="text-white font-bold text-lg mb-2">Conexion con capital privado</h4>
                                     <p className="text-[#8E8FA3] text-sm">Contactamos directamente tu portafolio ideal de fondos de inversión exigentes del país.</p>
                                 </div>
                                 <div className="border border-white/10 p-6 rounded-2xl bg-white/5 backdrop-blur-sm">

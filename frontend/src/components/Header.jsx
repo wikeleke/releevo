@@ -54,7 +54,7 @@ const Header = () => {
                     </div>
 
                     <nav className="hidden md:flex space-x-8 relative items-center" ref={megaMenuRef}>
-                        <Link to="/marketplace" className="text-dark-700 hover:text-brand-900 font-bold transition-colors">Marketplace</Link>
+                        <Link to="/marketplace" className="text-dark-700 hover:text-brand-900 font-bold transition-colors">Mercado</Link>
 
                         {/* Vendedores Dropdown Trigger */}
                         <div
@@ -183,7 +183,7 @@ const Header = () => {
                                     {/* Mobile Only Navigation Menu */}
                                     <div className="md:hidden">
                                         <Link to="/marketplace" onClick={() => setIsMenuOpen(false)} className="block px-6 py-3 text-[15px] font-bold text-[#3B3C4B] hover:bg-light-100 transition-colors">
-                                            Marketplace
+                                            Mercado
                                         </Link>
 
                                         <div className="px-6 py-2 text-[11px] font-bold text-dark-500 tracking-wider uppercase mt-1">Vendedores</div>
@@ -234,7 +234,7 @@ const Header = () => {
                                             onClick={() => setIsMenuOpen(false)}
                                             className="block px-6 py-3 text-[15px] font-bold text-[#3B3C4B] hover:bg-light-100 transition-colors"
                                         >
-                                            Dashboard
+                                            Panel
                                         </Link>
                                         <button
                                             onClick={handleLogout}

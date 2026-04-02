@@ -17,7 +17,7 @@ const ResetPassword = () => {
         
         if (password !== confirmPassword) {
             setStatus('error');
-            setMessage('Passwords do not match');
+            setMessage('Las contrasenas no coinciden');
             return;
         }
 
@@ -27,7 +27,7 @@ const ResetPassword = () => {
             setMessage(data.message);
             setStatus('success');
         } catch (err) {
-            setMessage(err.response?.data?.message || 'Failed to reset password');
+            setMessage(err.response?.data?.message || 'No se pudo restablecer la contrasena');
             setStatus('error');
         }
     };
@@ -39,9 +39,9 @@ const ResetPassword = () => {
                     <div className={`inline-flex justify-center items-center w-16 h-16 rounded-full mb-4 ${status === 'success' ? 'bg-green-50' : 'bg-blue-50'}`}>
                         {status === 'success' ? <CheckCircle className="w-8 h-8 text-green-500" /> : <KeyRound className="w-8 h-8 text-marine" />}
                     </div>
-                    <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">Set new password</h2>
+                    <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">Establecer nueva contrasena</h2>
                     <p className="mt-2 text-sm text-gray-600">
-                        {status === 'success' ? 'Your password has been reset successfully.' : 'Please enter your new password below.'}
+                        {status === 'success' ? 'Tu contrasena se restablecio correctamente.' : 'Ingresa tu nueva contrasena a continuacion.'}
                     </p>
                 </div>
 
@@ -54,7 +54,7 @@ const ResetPassword = () => {
                             to="/login"
                             className="w-full flex justify-center items-center py-3.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-bold text-white bg-marine hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-marine transition-all"
                         >
-                            Continue to Login <ArrowRight className="w-4 h-4 ml-2" />
+                            Continuar al inicio de sesion <ArrowRight className="w-4 h-4 ml-2" />
                         </Link>
                     </div>
                 ) : (
@@ -66,7 +66,7 @@ const ResetPassword = () => {
                         )}
 
                         <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-1.5" htmlFor="password">New Password</label>
+                            <label className="block text-sm font-bold text-gray-700 mb-1.5" htmlFor="password">Nueva contrasena</label>
                             <input
                                 id="password"
                                 type="password"
@@ -81,7 +81,7 @@ const ResetPassword = () => {
                         </div>
 
                         <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-1.5" htmlFor="confirmPassword">Confirm Password</label>
+                            <label className="block text-sm font-bold text-gray-700 mb-1.5" htmlFor="confirmPassword">Confirmar contrasena</label>
                             <input
                                 id="confirmPassword"
                                 type="password"
@@ -102,7 +102,7 @@ const ResetPassword = () => {
                                 ${status === 'loading' ? 'bg-blue-300 cursor-not-allowed' : 'bg-marine hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-marine'}
                             `}
                         >
-                            {status === 'loading' ? 'Resetting...' : 'Reset Password'}
+                            {status === 'loading' ? 'Restableciendo...' : 'Restablecer contrasena'}
                         </button>
                     </form>
                 )}

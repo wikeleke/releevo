@@ -12,7 +12,7 @@ const mockBusinesses = [
         description: 'Excelente oportunidad para adquirir una cafetería con clientela establecida y equipo de alta gama en pleno centro de la ciudad.',
         location: { city: 'Ciudad de México', state: 'CDMX' },
         financials: { askingPrice: 1500000, annualRevenue: 2500000, annualProfit: 600000 },
-        category: 'Food & Beverage',
+        category: 'Alimentos y bebidas',
         status: 'published'
     },
     {
@@ -32,7 +32,7 @@ const mockBusinesses = [
         description: 'Gimnasio llave en mano operando con más de 300 socios activos. Remodelado recientemente.',
         location: { city: 'Monterrey', state: 'Nuevo León' },
         financials: { askingPrice: 2800000, annualRevenue: 1800000, annualProfit: 800000 },
-        category: 'Services',
+        category: 'Servicios',
         status: 'published'
     }
 ];
@@ -149,7 +149,7 @@ const Home = () => {
                                 <ShieldCheck className="w-6 h-6" />
                             </div>
                             <h3 className="text-xl font-bold text-dark-900 mb-3">2. Analiza con Privacidad</h3>
-                            <p className="text-dark-500 leading-relaxed">Accede a nuestro Premium para ver P&Ls, datos de contacto verificados, nombre legal y ubicación exacta bajo estrictos acuerdos de confidencialidad.</p>
+                            <p className="text-dark-500 leading-relaxed">Accede a nuestro plan avanzado para ver datos financieros, contactos verificados, nombre legal y ubicacion exacta bajo estrictos acuerdos de confidencialidad.</p>
                         </div>
                         <div className="relative p-8 bg-brand-100/30 rounded-3xl border border-brand-100 hover:bg-brand-100/60 transition-colors">
                             <div className="w-14 h-14 bg-brand-900 text-white rounded-2xl flex items-center justify-center mb-6 shadow-md shadow-brand-300">
@@ -195,7 +195,7 @@ const Home = () => {
                                     <path d="M14.017 21L16.411 14.283C14.122 14.283 12.333 12.441 12.333 10.083C12.333 7.725 14.122 5.883 16.411 5.883C18.7 5.883 20.489 7.725 20.489 10.083C20.489 11.233 19.989 12.333 19.344 13.25L16.5 21H14.017ZM5.528 21L7.922 14.283C5.633 14.283 3.844 12.441 3.844 10.083C3.844 7.725 5.633 5.883 7.922 5.883C10.211 5.883 12 7.725 12 10.083C12 11.233 11.5 12.333 10.856 13.25L8.011 21H5.528Z" />
                                 </svg>
                             </div>
-                            <p className="text-2xl font-bold text-dark-800 mb-8 leading-relaxed">"Pude buscar opciones de inversión con privacidad absoluta. La interfaz para verificar los estados financieros Premium fue la clave para animarme a comprar rápidamente."</p>
+                            <p className="text-2xl font-bold text-dark-800 mb-8 leading-relaxed">"Pude buscar opciones de inversion con privacidad absoluta. La interfaz para verificar los estados financieros avanzados fue clave para animarme a comprar rapidamente."</p>
                             <div className="flex items-center">
                                 <div className="h-14 w-14 rounded-full bg-brand-100 flex items-center justify-center text-xl font-bold text-brand-900 mr-4 border border-brand-300">
                                     AR
@@ -232,7 +232,7 @@ const Home = () => {
                     ) : (
                         <div className="text-center py-20 bg-light-100 rounded-3xl border border-dashed border-light-400">
                             <Briefcase className="h-12 w-12 text-light-500 mx-auto mb-4" />
-                            <h3 className="text-xl font-bold text-dark-900">Sin listings activos</h3>
+                            <h3 className="text-xl font-bold text-dark-900">Sin listados activos</h3>
                             <p className="text-dark-500 mt-2">Vuelve pronto para ver nuevas oportunidades de inversión.</p>
                         </div>
                     )}

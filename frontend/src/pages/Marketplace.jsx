@@ -25,7 +25,7 @@ const Marketplace = () => {
             const { data } = await api.get(`/business?${queryParams.toString()}`);
             setBusinesses(data);
         } catch (err) {
-            console.error('Failed to fetch businesses');
+            console.error('No se pudieron cargar los negocios');
         } finally {
             setLoading(false);
         }
@@ -48,8 +48,8 @@ const Marketplace = () => {
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
             <div className="mb-8">
-                <h1 className="text-4xl font-extrabold text-oxford tracking-tight">Marketplace</h1>
-                <p className="text-gray-500 mt-2 text-lg">Find the right business for your next venture.</p>
+                <h1 className="text-4xl font-extrabold text-oxford tracking-tight">Mercado</h1>
+                <p className="text-gray-500 mt-2 text-lg">Encuentra el negocio ideal para tu proxima inversion.</p>
             </div>
 
             <div className="flex flex-col md:flex-row gap-8 items-start">
@@ -71,7 +71,7 @@ const Marketplace = () => {
                     ) : businesses.length > 0 ? (
                         <>
                             <div className="mb-6 text-sm font-medium text-gray-500">
-                                Found {businesses.length} {businesses.length === 1 ? 'business' : 'businesses'}
+                                Se encontraron {businesses.length} {businesses.length === 1 ? 'negocio' : 'negocios'}
                             </div>
                             <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
                                 {businesses.map(biz => (
@@ -84,13 +84,13 @@ const Marketplace = () => {
                             <div className="mx-auto w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4">
                                 <SearchX className="h-8 w-8 text-gray-400" />
                             </div>
-                            <h3 className="text-xl font-bold text-gray-900 mb-2">No businesses found</h3>
-                            <p className="text-gray-500 max-w-sm mx-auto">We couldn't find any listings matching your current criteria. Try adjusting your filters.</p>
+                            <h3 className="text-xl font-bold text-gray-900 mb-2">No se encontraron negocios</h3>
+                            <p className="text-gray-500 max-w-sm mx-auto">No encontramos listados con tus criterios actuales. Intenta ajustar los filtros.</p>
                             <button
                                 onClick={clearFilters}
                                 className="mt-6 inline-flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-marine"
                             >
-                                Clear all filters
+                                Limpiar todos los filtros
                             </button>
                         </div>
                     )}
