@@ -3,6 +3,7 @@ const Business = require('../models/Business');
 const slugify = require('slugify');
 const getStripe = require('../config/stripe');
 const { publicListingLabel, maskedListingDescription } = require('../utils/listingMask');
+const { resolveMarketSectorCondition } = require('../utils/marketFilters');
 
 const normalizeRole = (rawRole) => {
     if (typeof rawRole !== 'string') return '';
@@ -57,7 +58,6 @@ exports.getBusinesses = async (req, res) => {
         const { city, sector, giro, minPrice, maxPrice, category, size } = req.query;
         const filter = { status: 'published' };
         if (city) filter['location.city'] = city;
-        if (sector) filter.sector = sector;
         if (giro) filter.giro = giro;
         if (category) filter.category = category;
         if (size) filter.size = size;
@@ -66,7 +66,14 @@ exports.getBusinesses = async (req, res) => {
             if (minPrice) filter['financials.askingPrice'].$gte = Number(minPrice);
             if (maxPrice) filter['financials.askingPrice'].$lte = Number(maxPrice);
         }
-        const businesses = await Business.find(filter)
+
+        const sectorCond = sector ? resolveMarketSectorCondition(sector) : null;
+        const mongoFilter =
+            sectorCond && Object.keys(sectorCond).length > 0
+                ? { $and: [filter, sectorCond] }
+                : filter;
+
+        const businesses = await Business.find(mongoFilter)
             .select('title slug description category sector giro size location financials status sellerId')
             .lean();
 

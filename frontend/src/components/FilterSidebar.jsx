@@ -36,9 +36,12 @@ const FilterSidebar = ({ filters, setFilters, applyFilters }) => {
                 </div>
 
                 <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-1.5">Sector</label>
+                    <label className="block text-sm font-bold text-gray-700 mb-1.5">
+                        Categoría / sector
+                    </label>
                     <select
                         name="sector"
+                        aria-label="Filtrar por categoría o industria"
                         value={filters.sector || ''}
                         onChange={handleChange}
                         className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-marine focus:bg-white text-sm transition-all appearance-none cursor-pointer"
