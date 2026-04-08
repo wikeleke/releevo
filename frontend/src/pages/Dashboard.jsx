@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import { useAuth, RedirectToSignIn } from '@clerk/clerk-react';
-import { PlusCircle, Edit, CheckCircle, Clock, Trash2, ShieldCheck, DollarSign } from 'lucide-react';
+import { PlusCircle, CheckCircle, Trash2, DollarSign } from 'lucide-react';
 
 const statusLabel = (status) => {
     const normalized = String(status || '').toLowerCase();
@@ -60,7 +60,7 @@ const Dashboard = () => {
             const status = err?.response?.status;
 
             if (status === 403) {
-                setError('Tu usuario no tiene acceso al dashboard de listados.');
+                setError('No tienes permiso para esta acción.');
             } else if (status === 401) {
                 setError('No se pudo validar tu sesión. Intenta recargar la página.');
             } else if (err?.code === 'ECONNABORTED') {
@@ -126,12 +126,50 @@ const Dashboard = () => {
         }
     };
 
+    if (currentRole === 'buyer') {
+        return (
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+                <div className="mb-8">
+                    <h1 className="text-3xl font-extrabold text-oxford tracking-tight">Tu cuenta</h1>
+                    <p className="text-gray-500 mt-1">
+                        Explora oportunidades en el marketplace o activa una membresía para ver información confidencial.
+                    </p>
+                </div>
+                <div className="bg-white rounded-2xl border border-gray-200 p-8 max-w-xl shadow-sm">
+                    <p className="text-gray-700 mb-4 font-medium">
+                        Esta sección de listados es para vendedores. Como comprador, accede al marketplace desde aquí.
+                    </p>
+                    <button
+                        type="button"
+                        onClick={() => navigate('/marketplace')}
+                        className="px-5 py-2.5 bg-marine text-white rounded-lg font-bold hover:bg-blue-900 transition-colors"
+                    >
+                        Ir al marketplace
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => navigate('/pricing/buyers')}
+                        className="ml-3 px-5 py-2.5 border border-gray-300 text-gray-800 rounded-lg font-bold hover:bg-gray-50 transition-colors"
+                    >
+                        Membresía comprador
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
             <div className="flex justify-between items-center mb-8">
                 <div>
-                    <h1 className="text-3xl font-extrabold text-oxford tracking-tight">Panel de control</h1>
-                    <p className="text-gray-500 mt-1">Administra tus listados y tu cuenta.</p>
+                    <h1 className="text-3xl font-extrabold text-oxford tracking-tight">
+                        {currentRole === 'admin' ? 'Panel de administración' : 'Tus listados'}
+                    </h1>
+                    <p className="text-gray-500 mt-1">
+                        {currentRole === 'admin'
+                            ? 'Revisa y gestiona los listados de la plataforma.'
+                            : 'Administra los negocios que tienes en venta.'}
+                    </p>
                 </div>
 
                 {(currentRole === 'seller' || currentRole === 'admin') && (
@@ -139,7 +177,7 @@ const Dashboard = () => {
                         onClick={() => navigate('/create-listing')}
                         className="flex items-center px-4 py-2 bg-marine text-white rounded-lg font-bold hover:bg-blue-900 transition-colors shadow-sm"
                     >
-                        <PlusCircle className="mr-2 h-5 w-5" /> Listar tu Negocio
+                        <PlusCircle className="mr-2 h-5 w-5" /> Agregar negocio en venta
                     </button>
                 )}
             </div>
@@ -148,7 +186,7 @@ const Dashboard = () => {
 
 
             {/* Existing Listings */}
-            <h2 className="text-2xl font-bold text-oxford mb-6">{currentRole === 'admin' ? 'Todos los listados de la plataforma' : 'Mis listados'}</h2>
+            <h2 className="text-2xl font-bold text-oxford mb-6">{currentRole === 'admin' ? 'Todos los listados de la plataforma' : 'Negocios que listaste'}</h2>
 
             {businesses.length === 0 ? (
                 <div className="bg-white rounded-2xl p-12 text-center border border-dashed border-gray-300">

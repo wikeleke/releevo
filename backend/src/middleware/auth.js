@@ -1,6 +1,11 @@
 // src/middleware/auth.js
 const { requireAuth, clerkClient, getAuth } = require('@clerk/express');
 const User = require('../models/User');
+const {
+    roleFromClerkSdkUser,
+    shouldUpgradeMongoRole,
+    normalizeRole: normalizeRoleStrict,
+} = require('../utils/clerkRole');
 
 const normalizeRole = (rawRole) => {
     if (typeof rawRole !== 'string') return 'buyer';
@@ -25,17 +30,16 @@ const protectUser = async (req, res, next) => {
         }
 
         let user = await User.findOne({ clerkId });
-        
+
         if (!user) {
-            // First time this Clerk user hits the protected route
             const emailFromClaims =
                 auth?.sessionClaims?.email ||
                 auth?.sessionClaims?.primary_email_address ||
                 null;
             let email = emailFromClaims;
 
+            const clerkUser = await clerkClient.users.getUser(clerkId);
             if (!email) {
-                const clerkUser = await clerkClient.users.getUser(clerkId);
                 email = clerkUser.emailAddresses[0]?.emailAddress || null;
             }
             email = normalizeEmail(email);
@@ -43,32 +47,43 @@ const protectUser = async (req, res, next) => {
             if (!email) {
                 return res.status(401).json({ message: 'Not authorized: missing email in session' });
             }
-            
-            // Link if email already exists
+
+            const clerkRole = roleFromClerkSdkUser(clerkUser);
+            const initialRole = normalizeRoleStrict(clerkRole) || 'buyer';
+
             user = await User.findOne({ email });
             if (user) {
                 user.clerkId = clerkId;
+                if (clerkRole && shouldUpgradeMongoRole(user.role, clerkRole)) {
+                    user.role = normalizeRoleStrict(clerkRole);
+                }
                 await user.save();
             } else {
-                // Otherwise create new mapping with placeholder password
                 user = await User.create({
                     clerkId,
                     email,
                     password: 'clerk_placeholder_password',
-                    role: 'buyer',
+                    role: initialRole,
                     isPremium: false,
                 });
+            }
+        } else if (normalizeRole(user.role) === 'buyer') {
+            try {
+                const clerkUser = await clerkClient.users.getUser(clerkId);
+                const clerkRole = roleFromClerkSdkUser(clerkUser);
+                if (clerkRole && shouldUpgradeMongoRole(user.role, clerkRole)) {
+                    user.role = normalizeRoleStrict(clerkRole);
+                    await user.save();
+                }
+            } catch (syncErr) {
+                console.error('Clerk role sync error:', syncErr?.message || syncErr);
             }
         }
 
         // Normalize persisted role in case it was edited manually with casing/spacing.
         const normalizedExistingRole = normalizeRole(user.role);
-        let changed = false;
         if (normalizedExistingRole && user.role !== normalizedExistingRole) {
             user.role = normalizedExistingRole;
-            changed = true;
-        }
-        if (changed) {
             await user.save();
         }
         

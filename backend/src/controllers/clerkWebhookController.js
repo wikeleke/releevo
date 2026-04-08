@@ -2,24 +2,14 @@ const crypto = require('crypto');
 const { Webhook } = require('svix');
 const User = require('../models/User');
 
+const { shouldUpgradeMongoRole } = require('../utils/clerkRole');
+
 const randomPassword = () => `clerk_${crypto.randomBytes(24).toString('hex')}`;
 
 const normalizeRole = (rawRole) => {
   if (typeof rawRole !== 'string') return null;
   const role = rawRole.trim().toLowerCase();
   return ['admin', 'seller', 'buyer'].includes(role) ? role : null;
-};
-
-const shouldUpdateRole = (currentRoleRaw, nextRoleRaw) => {
-  const currentRole = normalizeRole(currentRoleRaw);
-  const nextRole = normalizeRole(nextRoleRaw);
-  if (!nextRole || currentRole === nextRole) return false;
-
-  // Role source of truth is Mongo; only allow role upgrades from Clerk.
-  if (!currentRole) return true;
-  if (currentRole === 'buyer' && (nextRole === 'seller' || nextRole === 'admin')) return true;
-  if (currentRole === 'seller' && nextRole === 'admin') return true;
-  return false;
 };
 
 const parseBoolean = (value) => {
@@ -91,9 +81,12 @@ const upsertFromClerkUser = async (clerkUser) => {
     return user;
   }
 
-  // Mongo is the source of truth for role/premium. Webhooks only keep identity linked.
+  // Identity + optional role upgrade from Clerk (buyer -> seller/admin).
   user.clerkId = clerkId;
   user.email = email;
+  if (role && shouldUpgradeMongoRole(user.role, role)) {
+    user.role = role;
+  }
   await user.save();
   return user;
 };

@@ -83,7 +83,12 @@ exports.getBusinessDetail = async (req, res) => {
         };
 
         const role = normalizeRole(req.user?.role);
-        const canViewConfidential = Boolean(req.user && (req.user.isPremium || role === 'admin'));
+        const sellerRef = business.sellerId?._id || business.sellerId;
+        const isOwner =
+            Boolean(req.user && sellerRef && String(sellerRef) === String(req.user._id));
+        const canViewConfidential = Boolean(
+            req.user && (req.user.isPremium || role === 'admin' || isOwner)
+        );
         response.canViewConfidential = canViewConfidential;
 
         // Premium users and admins can always view confidential listing details.
@@ -189,7 +194,10 @@ exports.getDashboardBusinesses = async (req, res) => {
         if (role === 'seller') {
             filter.sellerId = req.user._id;
         } else if (role === 'buyer') {
-            return res.status(403).json({ message: 'Buyers do not have listings' });
+            return res.json({
+                role: 'buyer',
+                businesses: [],
+            });
         }
         const businesses = await Business.find(filter).sort({ createdAt: -1 });
         res.json({

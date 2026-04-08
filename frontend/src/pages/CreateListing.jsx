@@ -27,13 +27,18 @@ const CreateListing = () => {
 
             try {
                 const token = await getToken({ skipCache: true });
-                await api.get('/business/dashboard', {
+                const { data } = await api.get('/business/dashboard', {
                     headers: token ? { Authorization: `Bearer ${token}` } : undefined,
                     timeout: 30000,
                 });
+                const apiRole = typeof data?.role === 'string' ? data.role.toLowerCase() : '';
+                if (apiRole === 'buyer') {
+                    navigate('/dashboard', { replace: true });
+                    return;
+                }
                 setAuthorizing(false);
-            } catch (err) {
-                navigate('/dashboard');
+            } catch {
+                navigate('/dashboard', { replace: true });
             }
         };
 

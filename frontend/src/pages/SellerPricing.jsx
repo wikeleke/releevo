@@ -79,7 +79,7 @@ const SellerPricing = () => {
                                     {tiers[activeTier].monthly}
                                 </p>
 
-                                <Link to="/signup" className="w-full max-w-[280px] px-8 py-4 text-lg font-bold rounded-[20px] text-white bg-[#5764FF] hover:bg-[#4550E6] transition-all shadow-md flex items-center justify-center">
+                                <Link to="/signup?intent=seller" className="w-full max-w-[280px] px-8 py-4 text-lg font-bold rounded-[20px] text-white bg-[#5764FF] hover:bg-[#4550E6] transition-all shadow-md flex items-center justify-center">
                                     Comenzar <ArrowRight className="ml-2 w-5 h-5" />
                                 </Link>
                             </div>
