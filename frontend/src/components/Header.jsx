@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { User, LogOut, Menu, ChevronDown, FilePlus, Handshake, Star, Mail, Bell, X, UserCircle, Settings, CreditCard } from 'lucide-react';
+import { User, LogOut, Menu, ChevronDown, FilePlus, Handshake, Star, Mail, Bell, BellRing, X, UserCircle, Settings, CreditCard } from 'lucide-react';
 import { openStripeCustomerPortal } from '../services/billingPortal';
 import { SignedIn, SignedOut, SignInButton, useClerk, useUser, useAuth } from "@clerk/clerk-react";
 import { useMessageNotificationsContext } from '../context/MessageNotificationsContext.jsx';
@@ -177,19 +177,29 @@ const Header = () => {
                     {/* Right side section: Messages + Evaluate company + User Dropdown */}
                     <div className="flex items-center gap-2 md:gap-4">
                         {isSignedIn ? (
-                            <Link
-                                to="/inbox"
-                                className="relative hidden md:flex items-center justify-center w-10 h-10 rounded-full text-[#2B2B43] hover:bg-[#F7F8FC] border border-transparent hover:border-[#2B2B43]/20 transition-colors"
-                                title="Mensajes"
-                                aria-label="Mensajes"
-                            >
-                                <Mail className="w-5 h-5" strokeWidth={2.2} />
-                                {unreadLabel ? (
-                                    <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 flex items-center justify-center text-[10px] font-extrabold text-white bg-red-500 rounded-full border-2 border-white">
-                                        {unreadLabel}
-                                    </span>
-                                ) : null}
-                            </Link>
+                            <>
+                                <Link
+                                    to="/inbox"
+                                    className="relative hidden md:flex items-center justify-center w-10 h-10 rounded-full text-[#2B2B43] hover:bg-[#F7F8FC] border border-transparent hover:border-[#2B2B43]/20 transition-colors"
+                                    title="Notificaciones"
+                                    aria-label="Notificaciones"
+                                >
+                                    <Bell className="w-5 h-5" strokeWidth={2.2} />
+                                    {unreadLabel ? (
+                                        <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 flex items-center justify-center text-[10px] font-extrabold text-white bg-red-500 rounded-full border-2 border-white">
+                                            {unreadLabel}
+                                        </span>
+                                    ) : null}
+                                </Link>
+                                <Link
+                                    to="/inbox"
+                                    className="relative hidden md:flex items-center justify-center w-10 h-10 rounded-full text-[#2B2B43] hover:bg-[#F7F8FC] border border-transparent hover:border-[#2B2B43]/20 transition-colors"
+                                    title="Mensajes"
+                                    aria-label="Mensajes"
+                                >
+                                    <Mail className="w-5 h-5" strokeWidth={2.2} />
+                                </Link>
+                            </>
                         ) : null}
                         {/* Free valuation text link - Hidden on mobile, moved to dropdown */}
                         <Link to="/valuation" className="hidden md:block text-dark-500 hover:text-brand-900 font-bold text-[15px] transition-colors">
@@ -295,12 +305,20 @@ const Header = () => {
                                             className="flex items-center justify-between px-6 py-3 text-[15px] font-bold text-[#3B3C4B] hover:bg-light-100 transition-colors"
                                         >
                                             <span className="flex items-center gap-2">
-                                                <Mail className="w-4 h-4 text-brand-900" />
-                                                Mensajes
+                                                <Bell className="w-4 h-4 text-brand-900 shrink-0" />
+                                                Notificaciones
                                             </span>
                                             {unreadLabel ? (
                                                 <span className="text-[11px] font-extrabold bg-red-500 text-white px-2 py-0.5 rounded-full">{unreadLabel}</span>
                                             ) : null}
+                                        </Link>
+                                        <Link
+                                            to="/inbox"
+                                            onClick={() => setIsMenuOpen(false)}
+                                            className="flex items-center gap-2 px-6 py-3 text-[15px] font-bold text-[#3B3C4B] hover:bg-light-100 transition-colors"
+                                        >
+                                            <Mail className="w-4 h-4 text-brand-900 shrink-0" />
+                                            Mensajes
                                         </Link>
                                         {notifySupported && notifyPermission === 'default' ? (
                                             <button
@@ -311,7 +329,7 @@ const Header = () => {
                                                 }}
                                                 className="w-full text-left px-6 py-2.5 text-[13px] font-semibold text-[#5764FF] hover:bg-[#F0F2FF] flex items-center gap-2"
                                             >
-                                                <Bell className="w-4 h-4" />
+                                                <BellRing className="w-4 h-4 shrink-0" />
                                                 Activar avisos del navegador
                                             </button>
                                         ) : null}
