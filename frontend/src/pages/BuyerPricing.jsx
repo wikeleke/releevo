@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@clerk/clerk-react';
 import { Eye, ShieldCheck, Zap, Users, GraduationCap, CheckCircle2, ArrowRight } from 'lucide-react';
 import api from '../services/api';
-import { openStripeCustomerPortal } from '../services/billingPortal';
+import { openBillingOrSubscribe } from '../services/billingPortal';
 
 const BuyerPricing = () => {
+    const navigate = useNavigate();
     const { isSignedIn } = useAuth();
     const [loadingCheckout, setLoadingCheckout] = useState(false);
     const [portalLoading, setPortalLoading] = useState(false);
@@ -33,7 +34,7 @@ const BuyerPricing = () => {
     const openBillingPortal = async () => {
         if (!isSignedIn) return;
         setPortalLoading(true);
-        const result = await openStripeCustomerPortal();
+        const result = await openBillingOrSubscribe(navigate);
         setPortalLoading(false);
         if (!result.ok) {
             alert(result.message);

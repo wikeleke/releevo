@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { User, LogOut, Menu, ChevronDown, FilePlus, Handshake, Star, Mail, Bell, BellRing, X, UserCircle, Settings, CreditCard } from 'lucide-react';
-import { openStripeCustomerPortal } from '../services/billingPortal';
+import { openBillingOrSubscribe } from '../services/billingPortal';
 import { SignedIn, SignedOut, SignInButton, useClerk, useUser, useAuth } from "@clerk/clerk-react";
 import { useMessageNotificationsContext } from '../context/MessageNotificationsContext.jsx';
 
@@ -39,7 +39,7 @@ const Header = () => {
     };
 
     const handleBillingPortal = async () => {
-        const result = await openStripeCustomerPortal();
+        const result = await openBillingOrSubscribe(navigate);
         if (!result.ok) {
             alert(result.message);
         }

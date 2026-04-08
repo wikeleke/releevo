@@ -30,9 +30,6 @@ const BusinessCard = ({ business }) => {
                         <h3 className="text-xl font-semibold text-marine truncate" title={business.title}>
                             {business.title}
                         </h3>
-                        {business.isTitleMasked ? (
-                            <p className="text-xs text-gray-400 mt-1">Solo se muestra el giro. Activa membresía para ver el nombre.</p>
-                        ) : null}
                     </div>
                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
                         {categoryLabel(business.category)}

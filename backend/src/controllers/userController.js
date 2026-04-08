@@ -1,10 +1,28 @@
 const { clerkClient } = require('@clerk/express');
+const Business = require('../models/Business');
 const { verifyWebsiteUrl } = require('../utils/verifyWebsiteUrl');
 const {
     COMPANY_TYPE_VALUES,
     COMPANY_TYPES,
     ONBOARDING_EXIT_REASONS,
 } = require('../constants/companyOnboarding');
+
+const MANAGEABLE_LISTING_SUB_STATUS = ['active', 'trialing', 'past_due'];
+
+async function hasActiveSellerListingSubscription(userId) {
+    const rows = await Business.find({ sellerId: userId })
+        .select('isListingPaid listingSubscriptionStatus stripeListingSubscriptionId')
+        .lean();
+    return rows.some((b) => {
+        const st = String(b.listingSubscriptionStatus || '').toLowerCase();
+        if (st === 'canceled' || st === 'cancelled' || st === 'unpaid' || st === 'incomplete_expired') {
+            return false;
+        }
+        if (MANAGEABLE_LISTING_SUB_STATUS.includes(st)) return true;
+        if (b.isListingPaid && b.stripeListingSubscriptionId) return true;
+        return false;
+    });
+}
 
 const mergeClerkRole = async (clerkId, role) => {
     if (!clerkId) return;
@@ -37,11 +55,17 @@ exports.getMe = async (req, res) => {
                 contactEmail: u.sellerCompanyProfile.contactEmail,
             }
             : null;
+        let hasActiveSellerSubscription = false;
+        if (u.role === 'seller') {
+            hasActiveSellerSubscription = await hasActiveSellerListingSubscription(u._id);
+        }
+
         res.json({
             email: u.email,
             role: u.role,
             needsRoleOnboarding: Boolean(u.needsRoleOnboarding),
             isPremium: Boolean(u.isPremium),
+            hasActiveSellerSubscription,
             sellerCompanyProfile: profile,
         });
     } catch (err) {

@@ -80,7 +80,7 @@ const BusinessDetail = () => {
                     </h1>
                     {business.isTitleMasked ? (
                         <p className="text-blue-100/90 text-sm max-w-2xl">
-                            Vista pública: solo giro y ubicación. El nombre del negocio y los datos completos requieren membresía de comprador.
+                            Título orientativo según giro y sector publicados; el resumen inferior resume datos no confidenciales de la ficha.
                         </p>
                     ) : null}
                     <div className="flex flex-wrap gap-6 text-blue-100 font-medium mt-6">
