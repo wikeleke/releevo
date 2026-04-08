@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import { useAuth, RedirectToSignIn } from '@clerk/clerk-react';
-import { PlusCircle, CheckCircle, Trash2, DollarSign } from 'lucide-react';
+import { useMessageNotificationsContext } from '../context/MessageNotificationsContext.jsx';
+import { PlusCircle, CheckCircle, Trash2, DollarSign, FolderOpen, Mail } from 'lucide-react';
 
 const statusLabel = (status) => {
     const normalized = String(status || '').toLowerCase();
@@ -21,6 +22,7 @@ const Dashboard = () => {
     const [currentRole, setCurrentRole] = useState('');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const { unreadTotal: unreadMessages } = useMessageNotificationsContext();
 
     const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -39,6 +41,10 @@ const Dashboard = () => {
                         // Render cold starts can exceed 15s after inactivity.
                         timeout: 45000,
                     });
+                    if (data?.needsRoleOnboarding) {
+                        navigate('/onboarding', { replace: true });
+                        return;
+                    }
                     const roleFromApi = data?.role;
                     const businessesFromApi = Array.isArray(data) ? data : (data?.businesses || []);
                     setCurrentRole(typeof roleFromApi === 'string' ? roleFromApi : '');
@@ -132,12 +138,39 @@ const Dashboard = () => {
                 <div className="mb-8">
                     <h1 className="text-3xl font-extrabold text-oxford tracking-tight">Tu cuenta</h1>
                     <p className="text-gray-500 mt-1">
-                        Explora oportunidades en el marketplace o activa una membresía para ver información confidencial.
+                        Explora el mercado, guarda listas y chatea con vendedores si tienes membresía premium.
                     </p>
                 </div>
+
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
+                    <button
+                        type="button"
+                        onClick={() => navigate('/dashboard/lists')}
+                        className="text-left bg-white rounded-2xl border border-gray-200 p-6 shadow-sm hover:border-marine/40 hover:shadow-md transition-all"
+                    >
+                        <FolderOpen className="w-8 h-8 text-marine mb-3" />
+                        <h2 className="font-bold text-lg text-oxford">Mis listas</h2>
+                        <p className="text-sm text-gray-500 mt-1">Agrupa negocios para revisarlos después.</p>
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => navigate('/inbox')}
+                        className="text-left bg-white rounded-2xl border border-gray-200 p-6 shadow-sm hover:border-marine/40 hover:shadow-md transition-all"
+                    >
+                        <Mail className="w-8 h-8 text-marine mb-3" />
+                        <h2 className="font-bold text-lg text-oxford flex items-center gap-2">
+                            Mensajes
+                            {unreadMessages > 0 ? (
+                                <span className="text-xs font-bold bg-marine text-white px-2 py-0.5 rounded-full">{unreadMessages}</span>
+                            ) : null}
+                        </h2>
+                        <p className="text-sm text-gray-500 mt-1">Solo con membresía premium puedes contactar vendedores.</p>
+                    </button>
+                </div>
+
                 <div className="bg-white rounded-2xl border border-gray-200 p-8 max-w-xl shadow-sm">
                     <p className="text-gray-700 mb-4 font-medium">
-                        Esta sección de listados es para vendedores. Como comprador, accede al marketplace desde aquí.
+                        Descubre negocios en venta en el mercado.
                     </p>
                     <button
                         type="button"
@@ -160,7 +193,7 @@ const Dashboard = () => {
 
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-            <div className="flex justify-between items-center mb-8">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8">
                 <div>
                     <h1 className="text-3xl font-extrabold text-oxford tracking-tight">
                         {currentRole === 'admin' ? 'Panel de administración' : 'Tus listados'}
@@ -172,14 +205,30 @@ const Dashboard = () => {
                     </p>
                 </div>
 
-                {(currentRole === 'seller' || currentRole === 'admin') && (
-                    <button
-                        onClick={() => navigate('/create-listing')}
-                        className="flex items-center px-4 py-2 bg-marine text-white rounded-lg font-bold hover:bg-blue-900 transition-colors shadow-sm"
-                    >
-                        <PlusCircle className="mr-2 h-5 w-5" /> Agregar negocio en venta
-                    </button>
-                )}
+                <div className="flex flex-wrap items-center gap-2">
+                    {(currentRole === 'seller' || currentRole === 'admin') && (
+                        <button
+                            type="button"
+                            onClick={() => navigate('/inbox')}
+                            className="flex items-center px-4 py-2 border border-gray-300 text-oxford rounded-lg font-bold hover:bg-gray-50 transition-colors shadow-sm"
+                        >
+                            <Mail className="mr-2 h-5 w-5 text-marine" />
+                            Mensajes
+                            {unreadMessages > 0 ? (
+                                <span className="ml-2 text-xs bg-marine text-white px-2 py-0.5 rounded-full">{unreadMessages}</span>
+                            ) : null}
+                        </button>
+                    )}
+                    {(currentRole === 'seller' || currentRole === 'admin') && (
+                        <button
+                            type="button"
+                            onClick={() => navigate('/create-listing')}
+                            className="flex items-center px-4 py-2 bg-marine text-white rounded-lg font-bold hover:bg-blue-900 transition-colors shadow-sm"
+                        >
+                            <PlusCircle className="mr-2 h-5 w-5" /> Agregar negocio en venta
+                        </button>
+                    )}
+                </div>
             </div>
 
             {error && <div className="bg-red-50 text-red-700 p-4 rounded-lg mb-6">{error}</div>}

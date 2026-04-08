@@ -1,11 +1,21 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { User, LogOut, Menu, ChevronDown, FilePlus, Handshake, Star } from 'lucide-react';
-import { SignedIn, SignedOut, SignInButton, useClerk, useUser } from "@clerk/clerk-react";
+import { User, LogOut, Menu, ChevronDown, FilePlus, Handshake, Star, Mail, Bell, X } from 'lucide-react';
+import { SignedIn, SignedOut, SignInButton, useClerk, useUser, useAuth } from "@clerk/clerk-react";
+import { useMessageNotificationsContext } from '../context/MessageNotificationsContext.jsx';
 
 const Header = () => {
     const { signOut } = useClerk();
     const { user } = useUser();
+    const { isSignedIn } = useAuth();
+    const {
+        unreadTotal,
+        toastText,
+        dismissToast,
+        requestNotifyPermission,
+        notifySupported,
+        notifyPermission,
+    } = useMessageNotificationsContext();
     const navigate = useNavigate();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
@@ -43,7 +53,10 @@ const Header = () => {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
+    const unreadLabel = unreadTotal > 99 ? '99+' : unreadTotal > 0 ? String(unreadTotal) : null;
+
     return (
+        <>
         <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between py-4 items-center">
@@ -152,8 +165,23 @@ const Header = () => {
                         </div>
                     </nav>
 
-                    {/* Right side section: Evaluate company + User Dropdown */}
-                    <div className="flex items-center gap-3 md:gap-6">
+                    {/* Right side section: Messages + Evaluate company + User Dropdown */}
+                    <div className="flex items-center gap-2 md:gap-4">
+                        {isSignedIn ? (
+                            <Link
+                                to="/inbox"
+                                className="relative hidden md:flex items-center justify-center w-10 h-10 rounded-full text-[#2B2B43] hover:bg-[#F7F8FC] border border-transparent hover:border-[#2B2B43]/20 transition-colors"
+                                title="Mensajes"
+                                aria-label="Mensajes"
+                            >
+                                <Mail className="w-5 h-5" strokeWidth={2.2} />
+                                {unreadLabel ? (
+                                    <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 flex items-center justify-center text-[10px] font-extrabold text-white bg-red-500 rounded-full border-2 border-white">
+                                        {unreadLabel}
+                                    </span>
+                                ) : null}
+                            </Link>
+                        ) : null}
                         {/* Free valuation text link - Hidden on mobile, moved to dropdown */}
                         <Link to="/valuation" className="hidden md:block text-dark-500 hover:text-brand-900 font-bold text-[15px] transition-colors">
                             Valúa tu compañía
@@ -236,6 +264,32 @@ const Header = () => {
                                         >
                                             Panel
                                         </Link>
+                                        <Link
+                                            to="/inbox"
+                                            onClick={() => setIsMenuOpen(false)}
+                                            className="flex items-center justify-between px-6 py-3 text-[15px] font-bold text-[#3B3C4B] hover:bg-light-100 transition-colors"
+                                        >
+                                            <span className="flex items-center gap-2">
+                                                <Mail className="w-4 h-4 text-brand-900" />
+                                                Mensajes
+                                            </span>
+                                            {unreadLabel ? (
+                                                <span className="text-[11px] font-extrabold bg-red-500 text-white px-2 py-0.5 rounded-full">{unreadLabel}</span>
+                                            ) : null}
+                                        </Link>
+                                        {notifySupported && notifyPermission === 'default' ? (
+                                            <button
+                                                type="button"
+                                                onClick={async () => {
+                                                    await requestNotifyPermission();
+                                                    setIsMenuOpen(false);
+                                                }}
+                                                className="w-full text-left px-6 py-2.5 text-[13px] font-semibold text-[#5764FF] hover:bg-[#F0F2FF] flex items-center gap-2"
+                                            >
+                                                <Bell className="w-4 h-4" />
+                                                Activar avisos del navegador
+                                            </button>
+                                        ) : null}
                                         <button
                                             onClick={handleLogout}
                                             className="w-full text-left px-6 py-3 text-[15px] font-bold text-[#3B3C4B] hover:bg-light-100 transition-colors flex items-center gap-2"
@@ -268,6 +322,36 @@ const Header = () => {
                 </div>
             </div>
         </header>
+
+            {toastText ? (
+                <div
+                    className="fixed bottom-4 left-1/2 z-[200] w-[calc(100vw-2rem)] max-w-md -translate-x-1/2"
+                    role="status"
+                >
+                    <div className="flex items-start gap-3 rounded-2xl border border-[#2B2B43]/20 bg-[#111124] text-white px-4 py-3 shadow-2xl">
+                        <Bell className="w-5 h-5 text-[#6FBAFF] shrink-0 mt-0.5" />
+                        <p className="text-sm font-medium leading-snug flex-1 pt-0.5">{toastText}</p>
+                        <div className="flex flex-col items-end gap-1 shrink-0">
+                            <Link
+                                to="/inbox"
+                                onClick={dismissToast}
+                                className="text-xs font-bold text-[#6FBAFF] hover:underline whitespace-nowrap"
+                            >
+                                Abrir
+                            </Link>
+                            <button
+                                type="button"
+                                onClick={dismissToast}
+                                className="p-1 rounded-lg hover:bg-white/10 text-white/80"
+                                aria-label="Cerrar aviso"
+                            >
+                                <X className="w-4 h-4" />
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            ) : null}
+        </>
     );
 };
 

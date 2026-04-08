@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import PaywallModal from '../components/PaywallModal';
 import { MapPin, Briefcase, TrendingUp, DollarSign, Lock, Mail, Phone, Globe, ChevronLeft } from 'lucide-react';
 
 const BusinessDetail = () => {
     const { slug } = useParams();
+    const navigate = useNavigate();
     const [business, setBusiness] = useState(null);
     const [loading, setLoading] = useState(true);
     const [showPaywall, setShowPaywall] = useState(false);
     const [error, setError] = useState(null);
+    const [contactLoading, setContactLoading] = useState(false);
 
     useEffect(() => {
         const fetchBusiness = async () => {
@@ -38,6 +40,23 @@ const BusinessDetail = () => {
         confidentialData.contactEmail ||
         confidentialData.website
     );
+
+    const handleContactSeller = async () => {
+        if (!canViewConfidential) {
+            setShowPaywall(true);
+            return;
+        }
+        if (!business._id) return;
+        setContactLoading(true);
+        try {
+            const { data } = await api.post('/messages/conversations', { businessId: business._id });
+            navigate(`/inbox/${data._id}`);
+        } catch (err) {
+            alert(err?.response?.data?.message || 'No se pudo abrir la conversación');
+        } finally {
+            setContactLoading(false);
+        }
+    };
 
     return (
         <div className="bg-background min-h-[calc(100vh-4rem)] pb-12">
@@ -201,17 +220,15 @@ const BusinessDetail = () => {
                                 </div>
                             </div>
                             <button
-                                onClick={() => {
-                                    if (!canViewConfidential) setShowPaywall(true);
-                                    else alert("Aqui se abriria la funcionalidad para contactar al vendedor.");
-                                }}
+                                type="button"
+                                onClick={handleContactSeller}
                                 className={`w-full mt-8 py-4 rounded-xl font-bold shadow-md transition-all flex justify-center items-center ${business.status === 'sold' ? 'bg-gray-100 text-gray-400 cursor-not-allowed shadow-none' : 'bg-marine text-white hover:bg-blue-900 active:scale-95'}`}
-                                disabled={business.status === 'sold'}
+                                disabled={business.status === 'sold' || contactLoading}
                             >
                                 {business.status === 'sold' ? 'Listado vendido' : (
                                     <>
                                         <Mail className="h-5 w-5 mr-2" />
-                                        Contactar vendedor
+                                        {contactLoading ? 'Abriendo…' : 'Contactar vendedor'}
                                     </>
                                 )}
                             </button>

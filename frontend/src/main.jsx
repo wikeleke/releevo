@@ -2,6 +2,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
 import App from './App.jsx';
+import { MessageNotificationsProvider } from './context/MessageNotificationsContext.jsx';
 import { ClerkProvider } from '@clerk/clerk-react';
 import { esES } from '@clerk/localizations';
 
@@ -15,7 +16,9 @@ if (!PUBLISHABLE_KEY) {
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/" localization={esES}>
-      <App />
+      <MessageNotificationsProvider>
+        <App />
+      </MessageNotificationsProvider>
     </ClerkProvider>
   </StrictMode>,
 );

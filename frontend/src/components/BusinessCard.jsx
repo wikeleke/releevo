@@ -1,6 +1,8 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { MapPin, Briefcase, TrendingUp } from 'lucide-react';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { MapPin, Briefcase, TrendingUp, ListPlus } from 'lucide-react';
+import { useAuth } from '@clerk/clerk-react';
+import AddToListModal from './AddToListModal';
 
 const categoryLabel = (category) => {
     const value = String(category || '').toLowerCase();
@@ -15,6 +17,11 @@ const categoryLabel = (category) => {
 };
 
 const BusinessCard = ({ business }) => {
+    const { isSignedIn } = useAuth();
+    const navigate = useNavigate();
+    const [listModalOpen, setListModalOpen] = useState(false);
+    const canSave = Boolean(business?._id);
+
     return (
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
             <div className="p-6">
@@ -51,13 +58,31 @@ const BusinessCard = ({ business }) => {
                     </div>
                 </div>
 
-                <Link
-                    to={`/business/${business.slug}`}
-                    className="block w-full text-center bg-gray-50 text-marine border border-gray-200 hover:bg-gray-100 font-medium py-2 px-4 rounded-lg transition-colors"
-                >
-                    Ver detalles
-                </Link>
+                <div className="flex gap-2 items-stretch">
+                    {canSave ? (
+                        <button
+                            type="button"
+                            title={isSignedIn ? 'Agregar a una lista' : 'Inicia sesión para guardar en listas'}
+                            onClick={() => (isSignedIn ? setListModalOpen(true) : navigate('/signup'))}
+                            className="shrink-0 flex items-center justify-center w-11 rounded-lg border border-gray-200 bg-white text-marine hover:bg-gray-50 hover:border-marine/40 transition-colors"
+                        >
+                            <ListPlus className="w-5 h-5" strokeWidth={2.2} />
+                        </button>
+                    ) : null}
+                    <Link
+                        to={`/business/${business.slug}`}
+                        className="flex-1 text-center bg-gray-50 text-marine border border-gray-200 hover:bg-gray-100 font-medium py-2 px-4 rounded-lg transition-colors flex items-center justify-center"
+                    >
+                        Ver detalles
+                    </Link>
+                </div>
             </div>
+            {listModalOpen && (
+                <AddToListModal
+                    businessId={business._id}
+                    onClose={() => setListModalOpen(false)}
+                />
+            )}
         </div>
     );
 };

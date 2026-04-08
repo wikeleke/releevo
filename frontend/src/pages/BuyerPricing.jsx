@@ -10,7 +10,7 @@ const BuyerPricing = () => {
 
     const startBuyerCheckout = async () => {
         if (!isSignedIn) {
-            window.location.href = '/signup';
+            window.location.href = '/signup?intent=buyer';
             return;
         }
         try {
@@ -77,7 +77,7 @@ const BuyerPricing = () => {
                                 </li>
                             </ul>
 
-                            <Link to="/signup" className="w-full py-4 text-center text-lg font-bold rounded-2xl text-[#111124] bg-[#F7F8FC] border-2 border-light-400 hover:border-brand-900 hover:text-brand-900 transition-all">
+                            <Link to="/signup?intent=buyer" className="w-full py-4 text-center text-lg font-bold rounded-2xl text-[#111124] bg-[#F7F8FC] border-2 border-light-400 hover:border-brand-900 hover:text-brand-900 transition-all">
                                 Explorar Gratis
                             </Link>
                         </div>

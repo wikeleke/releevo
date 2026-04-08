@@ -6,7 +6,7 @@ const Login = () => {
   return (
     <SignIn
       afterSignInUrl="/dashboard"
-      afterSignUpUrl="/dashboard"
+      afterSignUpUrl="/onboarding"
       redirectUrl="/dashboard"
       onSignIn={() => navigate('/dashboard')}
     />

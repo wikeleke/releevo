@@ -107,6 +107,7 @@ exports.getBusinessDetail = async (req, res) => {
         const bPlain = business.toObject ? business.toObject() : business;
 
         const response = {
+            _id: business._id,
             title: canViewConfidential ? business.title : publicListingLabel(bPlain),
             slug: business.slug,
             description: canViewConfidential ? business.description : maskedListingDescription(bPlain),
@@ -227,12 +228,14 @@ exports.getDashboardBusinesses = async (req, res) => {
             return res.json({
                 role: 'buyer',
                 businesses: [],
+                needsRoleOnboarding: Boolean(req.user.needsRoleOnboarding),
             });
         }
         const businesses = await Business.find(filter).sort({ createdAt: -1 });
         res.json({
             role,
             businesses,
+            needsRoleOnboarding: Boolean(req.user.needsRoleOnboarding),
         });
     } catch (err) {
         console.error(err);

@@ -76,6 +76,7 @@ const upsertFromClerkUser = async (clerkUser) => {
       password: randomPassword(),
       role: role || 'buyer',
       isPremium: isPremium ?? false,
+      needsRoleOnboarding: !role,
     });
     await user.save();
     return user;

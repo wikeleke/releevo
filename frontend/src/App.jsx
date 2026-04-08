@@ -6,6 +6,7 @@ import Footer from './components/Footer';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
+import Onboarding from './pages/Onboarding';
 import Marketplace from './pages/Marketplace';
 import BusinessDetail from './pages/BusinessDetail';
 import Dashboard from './pages/Dashboard';
@@ -16,6 +17,8 @@ import Valuation from './pages/Valuation';
 import CreateListing from './pages/CreateListing';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
+import BuyerLists from './pages/BuyerLists';
+import Inbox from './pages/Inbox';
 import { setClerkGetToken } from './services/api';
 
 function HomeOrDashboard() {
@@ -44,9 +47,14 @@ function App() {
             <Route path="/" element={<HomeOrDashboard />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/onboarding" element={<Onboarding />} />
             <Route path="/marketplace" element={<Marketplace />} />
             <Route path="/business/:slug" element={<BusinessDetail />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/dashboard/lists" element={<BuyerLists />} />
+            <Route path="/dashboard/lists/:listId" element={<BuyerLists />} />
+            <Route path="/inbox" element={<Inbox />} />
+            <Route path="/inbox/:conversationId" element={<Inbox />} />
             <Route path="/buyers" element={<Buyers />} />
             <Route path="/pricing/sellers" element={<SellerPricing />} />
             <Route path="/pricing/buyers" element={<BuyerPricing />} />

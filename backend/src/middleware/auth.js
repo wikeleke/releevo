@@ -65,6 +65,7 @@ const protectUser = async (req, res, next) => {
                     password: 'clerk_placeholder_password',
                     role: initialRole,
                     isPremium: false,
+                    needsRoleOnboarding: !clerkRole,
                 });
             }
         } else if (normalizeRole(user.role) === 'buyer') {

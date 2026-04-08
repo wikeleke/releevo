@@ -24,6 +24,11 @@ const UserSchema = new mongoose.Schema({
         enum: ['admin', 'seller', 'buyer'],
         default: 'buyer',
     },
+    /** Clerk: falta elegir vender vs comprar (post-registro). */
+    needsRoleOnboarding: {
+        type: Boolean,
+        default: false,
+    },
     isPremium: {
         type: Boolean,
         default: false,
@@ -42,6 +47,24 @@ const UserSchema = new mongoose.Schema({
     },
     resetPasswordToken: String,
     resetPasswordExpire: Date,
+    sellerCompanyProfile: {
+        companyType: { type: String, default: null },
+        companyName: { type: String, default: null },
+        website: { type: String, default: null },
+        websiteVerifiedAt: { type: Date, default: null },
+        owners: [{
+            name: { type: String, trim: true },
+            companyRole: { type: String, trim: true },
+        }],
+        address: { type: String, default: null },
+        contactPhone: { type: String, default: null },
+        contactEmail: { type: String, default: null, lowercase: true, trim: true },
+    },
+    onboardingExitLog: [{
+        reasonCode: { type: String },
+        step: { type: String },
+        at: { type: Date, default: Date.now },
+    }],
 }, { timestamps: true });
 
 // Hash password before saving

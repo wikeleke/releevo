@@ -11,6 +11,9 @@ const businessRoutes = require('./routes/business');
 const clerkWebhookRoutes = require('./routes/clerkWebhook');
 const billingRoutes = require('./routes/billing');
 const stripeWebhookRoutes = require('./routes/stripeWebhook');
+const watchlistRoutes = require('./routes/watchlists');
+const messageRoutes = require('./routes/messages');
+const userRoutes = require('./routes/users');
 
 const app = express();
 
@@ -37,6 +40,9 @@ connectDB();
 app.use('/api/auth', authRoutes);
 app.use('/api/business', businessRoutes);
 app.use('/api/billing', billingRoutes);
+app.use('/api/watchlists', watchlistRoutes);
+app.use('/api/messages', messageRoutes);
+app.use('/api/users', userRoutes);
 
 // Basic health check
 app.get('/', (req, res) => res.send('Releevo API is running'));
