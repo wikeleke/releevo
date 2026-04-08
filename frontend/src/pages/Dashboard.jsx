@@ -8,7 +8,9 @@ const statusLabel = (status) => {
     const normalized = String(status || '').toLowerCase();
     if (normalized === 'published') return 'publicado';
     if (normalized === 'pending') return 'pendiente';
+    if (normalized === 'accepted') return 'aceptado';
     if (normalized === 'sold') return 'vendido';
+    if (normalized === 'cancelled') return 'cancelado';
     return status;
 };
 
@@ -95,10 +97,14 @@ const Dashboard = () => {
 
     const handlePayListing = async (id) => {
         try {
-            await api.put(`/business/${id}/paylisting`);
-            fetchDashboardBusinesses();
+            const { data } = await api.post(`/billing/checkout/seller-listing/${id}`);
+            if (data?.url) {
+                window.location.href = data.url;
+                return;
+            }
+            alert('No se pudo iniciar el pago en Stripe');
         } catch (err) {
-            alert('No se pudo procesar el pago');
+            alert(err?.response?.data?.message || 'No se pudo procesar el pago');
         }
     };
 
@@ -106,8 +112,17 @@ const Dashboard = () => {
         try {
             await api.put(`/business/${id}/status`, { status });
             fetchDashboardBusinesses();
-        } catch (err) {
+        } catch {
             alert('No se pudo actualizar el estado');
+        }
+    };
+
+    const handleCancelListing = async (id) => {
+        try {
+            await api.put(`/business/${id}/cancel`);
+            fetchDashboardBusinesses();
+        } catch (err) {
+            alert(err?.response?.data?.message || 'No se pudo cancelar el listado');
         }
     };
 
@@ -172,7 +187,7 @@ const Dashboard = () => {
 
                                     {/* Actions */}
                                     <div className="flex flex-wrap items-center gap-3">
-                                        {currentRole === 'seller' && !biz.isListingPaid && biz.status === 'pending' && (
+                                        {currentRole === 'seller' && !biz.isListingPaid && biz.status === 'accepted' && (
                                             <button
                                                 onClick={() => handlePayListing(biz._id)}
                                                 className="flex items-center px-4 py-2 bg-green-600 text-white text-sm font-bold rounded-lg hover:bg-green-700 transition"
@@ -181,12 +196,21 @@ const Dashboard = () => {
                                             </button>
                                         )}
 
+                                        {currentRole === 'seller' && (biz.status === 'pending' || biz.status === 'accepted' || biz.status === 'published') && (
+                                            <button
+                                                onClick={() => handleCancelListing(biz._id)}
+                                                className="flex items-center px-4 py-2 bg-red-600 text-white text-sm font-bold rounded-lg hover:bg-red-700 transition"
+                                            >
+                                                <Trash2 className="w-4 h-4 mr-1" /> Cancelar listado
+                                            </button>
+                                        )}
+
                                         {currentRole === 'admin' && biz.status === 'pending' && (
                                             <button
-                                                onClick={() => handleUpdateStatus(biz._id, 'published')}
+                                                onClick={() => handleUpdateStatus(biz._id, 'accepted')}
                                                 className="flex items-center px-4 py-2 bg-green-600 text-white text-sm font-bold rounded-lg hover:bg-green-700 transition"
                                             >
-                                                <CheckCircle className="w-4 h-4 mr-1" /> Aprobar y publicar
+                                                <CheckCircle className="w-4 h-4 mr-1" /> Aceptar listado
                                             </button>
                                         )}
 

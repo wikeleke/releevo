@@ -16,9 +16,9 @@ const SellerPricing = () => {
     const [activeTier, setActiveTier] = useState(0);
 
     const tiers = [
-        { label: '<$250k', title: 'Para precios de venta menores a $250k', fee: '8%', monthly: 'Más $25/mes por publicar' },
-        { label: '$250k-$1M', title: 'Para precios de venta entre $250k y $1M', fee: '7%', monthly: 'Más $50/mes por publicar' },
-        { label: '$1M+', title: 'Para precios de venta mayores a $1M', fee: '6%', monthly: 'Más $100/mes por publicar' },
+        { label: '<$250k', title: 'Para precios de venta menores a $250k', fee: '8%', monthly: 'Suscripción de listado: $20 USD / mes' },
+        { label: '$250k-$1M', title: 'Para precios de venta entre $250k y $1M', fee: '7%', monthly: 'Suscripción de listado: $20 USD / mes' },
+        { label: '$1M+', title: 'Para precios de venta mayores a $1M', fee: '6%', monthly: 'Suscripción de listado: $20 USD / mes' },
     ];
 
     return (

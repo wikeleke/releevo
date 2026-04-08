@@ -9,6 +9,8 @@ const { clerkMiddleware } = require('@clerk/express');
 const authRoutes = require('./routes/auth');
 const businessRoutes = require('./routes/business');
 const clerkWebhookRoutes = require('./routes/clerkWebhook');
+const billingRoutes = require('./routes/billing');
+const stripeWebhookRoutes = require('./routes/stripeWebhook');
 
 const app = express();
 
@@ -24,6 +26,7 @@ app.use(cors({
 
 // Clerk webhooks need raw body to validate signatures.
 app.use('/api/clerk/webhooks', express.raw({ type: '*/*' }), clerkWebhookRoutes);
+app.use('/api/stripe/webhooks', express.raw({ type: 'application/json' }), stripeWebhookRoutes);
 
 app.use(express.json());
 
@@ -33,6 +36,7 @@ connectDB();
 // Mount routes
 app.use('/api/auth', authRoutes);
 app.use('/api/business', businessRoutes);
+app.use('/api/billing', billingRoutes);
 
 // Basic health check
 app.get('/', (req, res) => res.send('Releevo API is running'));

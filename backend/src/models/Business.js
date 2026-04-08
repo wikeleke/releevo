@@ -28,8 +28,11 @@ const BusinessSchema = new mongoose.Schema({
         website: { type: String },
     },
     // Control fields
-    status: { type: String, enum: ['pending', 'published', 'sold'], default: 'pending' },
+    status: { type: String, enum: ['pending', 'accepted', 'published', 'sold', 'cancelled'], default: 'pending' },
     isListingPaid: { type: Boolean, default: false },
+    stripeCustomerId: { type: String, default: null },
+    stripeListingSubscriptionId: { type: String, default: null },
+    listingSubscriptionStatus: { type: String, default: null },
     sellerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
 }, { timestamps: true });
 

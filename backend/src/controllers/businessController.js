@@ -1,6 +1,7 @@
 // src/controllers/businessController.js
 const Business = require('../models/Business');
 const slugify = require('slugify');
+const getStripe = require('../config/stripe');
 
 const normalizeRole = (rawRole) => {
     if (typeof rawRole !== 'string') return '';
@@ -101,9 +102,30 @@ exports.getBusinessDetail = async (req, res) => {
 // @access  Private (admin)
 exports.updateStatus = async (req, res) => {
     try {
-        const { status } = req.body; // expected 'published' or 'sold'
-        const business = await Business.findByIdAndUpdate(req.params.id, { status }, { new: true });
+        const { status } = req.body; // accepted, sold, cancelled
+        const allowedStatuses = ['accepted', 'sold', 'cancelled'];
+        if (!allowedStatuses.includes(status)) {
+            return res.status(400).json({ message: 'Invalid status update' });
+        }
+
+        const business = await Business.findById(req.params.id);
         if (!business) return res.status(404).json({ message: 'Business not found' });
+
+        business.status = status;
+
+        // If the listing is sold/cancelled, stop recurring Stripe billing.
+        if ((status === 'sold' || status === 'cancelled') && business.stripeListingSubscriptionId) {
+            try {
+                const stripe = getStripe();
+                await stripe.subscriptions.cancel(business.stripeListingSubscriptionId);
+            } catch (error) {
+                console.error('Stripe subscription cancel error:', error?.message || error);
+            }
+            business.isListingPaid = false;
+            business.listingSubscriptionStatus = 'canceled';
+        }
+
+        await business.save();
         res.json(business);
     } catch (err) {
         console.error(err);
@@ -116,10 +138,40 @@ exports.updateStatus = async (req, res) => {
 // @access  Private (seller)
 exports.payListing = async (req, res) => {
     try {
+        return res.status(400).json({
+            message: 'Deprecated endpoint. Use /api/billing/checkout/seller-listing/:businessId',
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+// @desc    Seller cancels own listing and recurring billing
+// @route   PUT /api/business/:id/cancel
+// @access  Private (seller)
+exports.cancelOwnListing = async (req, res) => {
+    try {
         const business = await Business.findOne({ _id: req.params.id, sellerId: req.user._id });
         if (!business) return res.status(404).json({ message: 'Business not found or not owned' });
-        business.isListingPaid = true;
+        if (business.status === 'sold') {
+            return res.status(400).json({ message: 'Sold listings cannot be cancelled' });
+        }
+
+        if (business.stripeListingSubscriptionId) {
+            try {
+                const stripe = getStripe();
+                await stripe.subscriptions.cancel(business.stripeListingSubscriptionId);
+            } catch (error) {
+                console.error('Stripe subscription cancel error:', error?.message || error);
+            }
+        }
+
+        business.status = 'cancelled';
+        business.isListingPaid = false;
+        business.listingSubscriptionStatus = 'canceled';
         await business.save();
+
         res.json(business);
     } catch (err) {
         console.error(err);

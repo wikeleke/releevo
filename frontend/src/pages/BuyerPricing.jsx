@@ -1,8 +1,33 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '@clerk/clerk-react';
 import { Eye, ShieldCheck, Zap, Users, GraduationCap, CheckCircle2, ArrowRight } from 'lucide-react';
+import api from '../services/api';
 
 const BuyerPricing = () => {
+    const { isSignedIn } = useAuth();
+    const [loadingCheckout, setLoadingCheckout] = useState(false);
+
+    const startBuyerCheckout = async () => {
+        if (!isSignedIn) {
+            window.location.href = '/signup';
+            return;
+        }
+        try {
+            setLoadingCheckout(true);
+            const { data } = await api.post('/billing/checkout/buyer-membership');
+            if (data?.url) {
+                window.location.href = data.url;
+                return;
+            }
+            alert('No se pudo iniciar el checkout de Stripe');
+        } catch (error) {
+            alert(error?.response?.data?.message || 'No se pudo iniciar el checkout');
+        } finally {
+            setLoadingCheckout(false);
+        }
+    };
+
     return (
         <div className="bg-white min-h-screen">
             {/* HERO SECTION */}
@@ -71,7 +96,7 @@ const BuyerPricing = () => {
                                 </p>
 
                                 <div className="text-[48px] font-black text-white mb-2 leading-none">
-                                    $7,000 <span className="text-xl">MXN</span>
+                                    $300 <span className="text-xl">USD</span>
                                     <span className="text-lg text-[#8E8FA3] font-medium ml-2 relative -top-3">/ anual</span>
                                 </div>
                                 <p className="text-brand-300 text-sm font-medium mb-8">Recupera la inversión con tu primer cierre.</p>
@@ -95,9 +120,13 @@ const BuyerPricing = () => {
                                     </li>
                                 </ul>
 
-                                <Link to="/signup" className="w-full py-4 text-center text-lg font-bold rounded-2xl text-white bg-[#5764FF] hover:bg-[#4550E6] transition-all shadow-lg flex items-center justify-center">
-                                    Volverte Miembro <ArrowRight className="ml-2 w-5 h-5" />
-                                </Link>
+                                <button
+                                    onClick={startBuyerCheckout}
+                                    disabled={loadingCheckout}
+                                    className="w-full py-4 text-center text-lg font-bold rounded-2xl text-white bg-[#5764FF] hover:bg-[#4550E6] transition-all shadow-lg flex items-center justify-center disabled:opacity-60"
+                                >
+                                    {loadingCheckout ? 'Redirigiendo...' : 'Volverte Miembro'} <ArrowRight className="ml-2 w-5 h-5" />
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -155,9 +184,13 @@ const BuyerPricing = () => {
                     </div>
 
                     <div className="mt-20 text-center">
-                        <Link to="/signup" className="inline-flex py-4 px-10 text-lg font-bold rounded-full text-white bg-[#111124] hover:bg-[#2B2B43] shadow-[0_15px_30px_rgba(17,17,36,0.15)] hover:-translate-y-1 transition-all">
-                            Adquiere tu Membresía Ahora
-                        </Link>
+                        <button
+                            onClick={startBuyerCheckout}
+                            disabled={loadingCheckout}
+                            className="inline-flex py-4 px-10 text-lg font-bold rounded-full text-white bg-[#111124] hover:bg-[#2B2B43] shadow-[0_15px_30px_rgba(17,17,36,0.15)] hover:-translate-y-1 transition-all disabled:opacity-60"
+                        >
+                            {loadingCheckout ? 'Redirigiendo...' : 'Adquiere tu Membresía Ahora'}
+                        </button>
                     </div>
                 </div>
             </section>

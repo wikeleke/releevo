@@ -28,6 +28,18 @@ const UserSchema = new mongoose.Schema({
         type: Boolean,
         default: false,
     },
+    stripeCustomerId: {
+        type: String,
+        default: null,
+    },
+    stripeBuyerSubscriptionId: {
+        type: String,
+        default: null,
+    },
+    buyerSubscriptionStatus: {
+        type: String,
+        default: null,
+    },
     resetPasswordToken: String,
     resetPasswordExpire: Date,
 }, { timestamps: true });

@@ -6,11 +6,11 @@ const {
     getBusinessDetail,
     updateStatus,
     payListing,
+    cancelOwnListing,
     getDashboardBusinesses
 } = require('../controllers/businessController');
 const protect = require('../middleware/auth');
 const roleCheck = require('../middleware/roleCheck');
-const checkPremium = require('../middleware/premium');
 
 const router = express.Router();
 
@@ -24,6 +24,7 @@ router.get('/:slug', protect, getBusinessDetail); // protect to get user info fo
 // Seller/Admin routes
 router.post('/', protect, roleCheck(['seller', 'admin']), createBusiness);
 router.put('/:id/paylisting', protect, roleCheck(['seller']), payListing);
+router.put('/:id/cancel', protect, roleCheck(['seller']), cancelOwnListing);
 
 // Admin routes
 router.put('/:id/status', protect, roleCheck(['admin']), updateStatus);
