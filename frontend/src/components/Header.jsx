@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { User, LogOut, Menu, ChevronDown, FilePlus, Handshake, Star, Mail, Bell, X } from 'lucide-react';
+import { User, LogOut, Menu, ChevronDown, FilePlus, Handshake, Star, Mail, Bell, X, UserCircle, Settings, CreditCard } from 'lucide-react';
+import { openStripeCustomerPortal } from '../services/billingPortal';
 import { SignedIn, SignedOut, SignInButton, useClerk, useUser, useAuth } from "@clerk/clerk-react";
 import { useMessageNotificationsContext } from '../context/MessageNotificationsContext.jsx';
 
@@ -34,6 +35,14 @@ const Header = () => {
     const handleLogout = async () => {
         localStorage.removeItem('token');
         await signOut({ redirectUrl: '/' });
+        setIsMenuOpen(false);
+    };
+
+    const handleBillingPortal = async () => {
+        const result = await openStripeCustomerPortal();
+        if (!result.ok) {
+            alert(result.message);
+        }
         setIsMenuOpen(false);
     };
 
@@ -265,6 +274,22 @@ const Header = () => {
                                             Panel
                                         </Link>
                                         <Link
+                                            to="/cuenta"
+                                            onClick={() => setIsMenuOpen(false)}
+                                            className="flex items-center gap-2 px-6 py-3 text-[15px] font-bold text-[#3B3C4B] hover:bg-light-100 transition-colors"
+                                        >
+                                            <Settings className="w-4 h-4 text-brand-900 shrink-0" />
+                                            Cuenta
+                                        </Link>
+                                        <Link
+                                            to="/perfil"
+                                            onClick={() => setIsMenuOpen(false)}
+                                            className="flex items-center gap-2 px-6 py-3 text-[15px] font-bold text-[#3B3C4B] hover:bg-light-100 transition-colors"
+                                        >
+                                            <UserCircle className="w-4 h-4 text-brand-900 shrink-0" />
+                                            Perfil
+                                        </Link>
+                                        <Link
                                             to="/inbox"
                                             onClick={() => setIsMenuOpen(false)}
                                             className="flex items-center justify-between px-6 py-3 text-[15px] font-bold text-[#3B3C4B] hover:bg-light-100 transition-colors"
@@ -291,11 +316,12 @@ const Header = () => {
                                             </button>
                                         ) : null}
                                         <button
-                                            onClick={handleLogout}
+                                            type="button"
+                                            onClick={handleBillingPortal}
                                             className="w-full text-left px-6 py-3 text-[15px] font-bold text-[#3B3C4B] hover:bg-light-100 transition-colors flex items-center gap-2"
                                         >
-                                            <LogOut className="w-4 h-4" />
-                                            Cerrar sesión
+                                            <CreditCard className="w-4 h-4 text-brand-900 shrink-0" />
+                                            Facturación y suscripción
                                         </button>
                                     </SignedIn>
 
@@ -315,6 +341,18 @@ const Header = () => {
                                     >
                                         Blog
                                     </Link>
+
+                                    <SignedIn>
+                                        <div className="border-t border-light-300 my-2 mx-5"></div>
+                                        <button
+                                            type="button"
+                                            onClick={handleLogout}
+                                            className="w-full text-left px-6 py-3 text-[15px] font-bold text-[#3B3C4B] hover:bg-light-100 transition-colors flex items-center gap-2"
+                                        >
+                                            <LogOut className="w-4 h-4" />
+                                            Cerrar sesión
+                                        </button>
+                                    </SignedIn>
                                 </div>
                             )}
                         </div>

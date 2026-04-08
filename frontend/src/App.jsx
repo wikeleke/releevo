@@ -19,6 +19,7 @@ import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import BuyerLists from './pages/BuyerLists';
 import Inbox from './pages/Inbox';
+import UserSettings from './pages/UserSettings';
 import { setClerkGetToken } from './services/api';
 
 function HomeOrDashboard() {
@@ -55,6 +56,8 @@ function App() {
             <Route path="/dashboard/lists/:listId" element={<BuyerLists />} />
             <Route path="/inbox" element={<Inbox />} />
             <Route path="/inbox/:conversationId" element={<Inbox />} />
+            <Route path="/cuenta/*" element={<UserSettings basePath="/cuenta" />} />
+            <Route path="/perfil/*" element={<UserSettings basePath="/perfil" />} />
             <Route path="/buyers" element={<Buyers />} />
             <Route path="/pricing/sellers" element={<SellerPricing />} />
             <Route path="/pricing/buyers" element={<BuyerPricing />} />

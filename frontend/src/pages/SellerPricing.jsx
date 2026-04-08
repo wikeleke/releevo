@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '@clerk/clerk-react';
 import { BadgeDollarSign, RefreshCcw, Handshake, PenTool, ShieldCheck, LockKeyhole, ScrollText, CheckCircle2, UserCheck, Check, ArrowRight } from 'lucide-react';
+import { openStripeCustomerPortal } from '../services/billingPortal';
 
 const FeatureCard = ({ icon: Icon, title, description }) => (
     <div className="flex flex-col items-start p-6">
@@ -13,7 +15,19 @@ const FeatureCard = ({ icon: Icon, title, description }) => (
 );
 
 const SellerPricing = () => {
+    const { isSignedIn } = useAuth();
     const [activeTier, setActiveTier] = useState(0);
+    const [portalLoading, setPortalLoading] = useState(false);
+
+    const openBillingPortal = async () => {
+        if (!isSignedIn) return;
+        setPortalLoading(true);
+        const result = await openStripeCustomerPortal();
+        setPortalLoading(false);
+        if (!result.ok) {
+            alert(result.message);
+        }
+    };
 
     const tiers = [
         { label: '<$250k', title: 'Para precios de venta menores a $250k', fee: '8%', monthly: 'Suscripción de listado: $20 USD / mes' },
@@ -82,6 +96,16 @@ const SellerPricing = () => {
                                 <Link to="/signup?intent=seller" className="w-full max-w-[280px] px-8 py-4 text-lg font-bold rounded-[20px] text-white bg-[#5764FF] hover:bg-[#4550E6] transition-all shadow-md flex items-center justify-center">
                                     Comenzar <ArrowRight className="ml-2 w-5 h-5" />
                                 </Link>
+                                {isSignedIn ? (
+                                    <button
+                                        type="button"
+                                        onClick={openBillingPortal}
+                                        disabled={portalLoading}
+                                        className="mt-4 text-sm font-semibold text-[#5764FF] hover:text-[#4550E6] underline underline-offset-2 disabled:opacity-50 max-w-[280px]"
+                                    >
+                                        {portalLoading ? 'Abriendo portal…' : 'Gestionar facturación del listado (Stripe)'}
+                                    </button>
+                                ) : null}
                             </div>
 
                             {/* Right Side: Features List */}

@@ -3,10 +3,12 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '@clerk/clerk-react';
 import { Eye, ShieldCheck, Zap, Users, GraduationCap, CheckCircle2, ArrowRight } from 'lucide-react';
 import api from '../services/api';
+import { openStripeCustomerPortal } from '../services/billingPortal';
 
 const BuyerPricing = () => {
     const { isSignedIn } = useAuth();
     const [loadingCheckout, setLoadingCheckout] = useState(false);
+    const [portalLoading, setPortalLoading] = useState(false);
 
     const startBuyerCheckout = async () => {
         if (!isSignedIn) {
@@ -25,6 +27,16 @@ const BuyerPricing = () => {
             alert(error?.response?.data?.message || 'No se pudo iniciar el checkout');
         } finally {
             setLoadingCheckout(false);
+        }
+    };
+
+    const openBillingPortal = async () => {
+        if (!isSignedIn) return;
+        setPortalLoading(true);
+        const result = await openStripeCustomerPortal();
+        setPortalLoading(false);
+        if (!result.ok) {
+            alert(result.message);
         }
     };
 
@@ -127,6 +139,16 @@ const BuyerPricing = () => {
                                 >
                                     {loadingCheckout ? 'Redirigiendo...' : 'Volverte Miembro'} <ArrowRight className="ml-2 w-5 h-5" />
                                 </button>
+                                {isSignedIn ? (
+                                    <button
+                                        type="button"
+                                        onClick={openBillingPortal}
+                                        disabled={portalLoading}
+                                        className="w-full mt-4 py-3 text-center text-sm font-semibold text-[#B8B9CC] hover:text-white underline underline-offset-2 disabled:opacity-50"
+                                    >
+                                        {portalLoading ? 'Abriendo portal…' : '¿Ya eres miembro? Gestionar facturación o cancelar renovación'}
+                                    </button>
+                                ) : null}
                             </div>
                         </div>
                     </div>

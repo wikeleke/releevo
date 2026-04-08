@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import { useAuth, RedirectToSignIn } from '@clerk/clerk-react';
 import { useMessageNotificationsContext } from '../context/MessageNotificationsContext.jsx';
-import { PlusCircle, CheckCircle, Trash2, DollarSign, FolderOpen, Mail } from 'lucide-react';
+import { PlusCircle, CheckCircle, Trash2, DollarSign, FolderOpen, Mail, CreditCard } from 'lucide-react';
+import { openStripeCustomerPortal } from '../services/billingPortal';
 
 const statusLabel = (status) => {
     const normalized = String(status || '').toLowerCase();
@@ -132,6 +133,13 @@ const Dashboard = () => {
         }
     };
 
+    const handleBillingPortal = async () => {
+        const result = await openStripeCustomerPortal();
+        if (!result.ok) {
+            alert(result.message);
+        }
+    };
+
     if (currentRole === 'buyer') {
         return (
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -165,6 +173,17 @@ const Dashboard = () => {
                             ) : null}
                         </h2>
                         <p className="text-sm text-gray-500 mt-1">Solo con membresía premium puedes contactar vendedores.</p>
+                    </button>
+                    <button
+                        type="button"
+                        onClick={handleBillingPortal}
+                        className="text-left bg-white rounded-2xl border border-gray-200 p-6 shadow-sm hover:border-marine/40 hover:shadow-md transition-all"
+                    >
+                        <CreditCard className="w-8 h-8 text-marine mb-3" />
+                        <h2 className="font-bold text-lg text-oxford">Facturación y suscripción</h2>
+                        <p className="text-sm text-gray-500 mt-1">
+                            Método de pago, facturas y cancelar renovación de tu membresía (Stripe).
+                        </p>
                     </button>
                 </div>
 
@@ -217,6 +236,16 @@ const Dashboard = () => {
                             {unreadMessages > 0 ? (
                                 <span className="ml-2 text-xs bg-marine text-white px-2 py-0.5 rounded-full">{unreadMessages}</span>
                             ) : null}
+                        </button>
+                    )}
+                    {(currentRole === 'seller' || currentRole === 'admin') && (
+                        <button
+                            type="button"
+                            onClick={handleBillingPortal}
+                            className="flex items-center px-4 py-2 border border-gray-300 text-oxford rounded-lg font-bold hover:bg-gray-50 transition-colors shadow-sm"
+                        >
+                            <CreditCard className="mr-2 h-5 w-5 text-marine" />
+                            Facturación
                         </button>
                     )}
                     {(currentRole === 'seller' || currentRole === 'admin') && (
