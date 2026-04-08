@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import api from '../services/api';
-import { useUser } from '@clerk/clerk-react';
 import PaywallModal from '../components/PaywallModal';
 import { MapPin, Briefcase, TrendingUp, DollarSign, Lock, Mail, Phone, Globe, ChevronLeft } from 'lucide-react';
 
 const BusinessDetail = () => {
     const { slug } = useParams();
-    const { user } = useUser();
     const [business, setBusiness] = useState(null);
     const [loading, setLoading] = useState(true);
     const [showPaywall, setShowPaywall] = useState(false);
@@ -25,13 +23,13 @@ const BusinessDetail = () => {
             }
         };
         fetchBusiness();
-    }, [slug, user?.isPremium]);
+    }, [slug]);
 
     if (loading) return <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-marine text-marine"></div></div>;
     if (error) return <div className="text-center mt-20 text-red-600 font-medium">{error}</div>;
     if (!business) return <div className="text-center mt-20 font-medium text-gray-500">Negocio no encontrado.</div>;
 
-    const canViewConfidential = Boolean(business?.canViewConfidential || user?.isPremium);
+    const canViewConfidential = Boolean(business?.canViewConfidential);
     const confidentialData = business?.confidentialData || {};
     const hasConfidentialData = Boolean(
         confidentialData.businessName ||
@@ -40,7 +38,6 @@ const BusinessDetail = () => {
         confidentialData.contactEmail ||
         confidentialData.website
     );
-    const isOwner = user?._id === business.sellerId?._id; // optional check
 
     return (
         <div className="bg-background min-h-[calc(100vh-4rem)] pb-12">
@@ -59,9 +56,14 @@ const BusinessDetail = () => {
                             {business.status}
                         </span>
                     </div>
-                    <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 leading-tight">
+                    <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-2 leading-tight">
                         {canViewConfidential && confidentialData.businessName ? confidentialData.businessName : business.title}
                     </h1>
+                    {business.isTitleMasked ? (
+                        <p className="text-blue-100/90 text-sm max-w-2xl">
+                            Vista pública: solo giro y ubicación. El nombre del negocio y los datos completos requieren membresía de comprador.
+                        </p>
+                    ) : null}
                     <div className="flex flex-wrap gap-6 text-blue-100 font-medium mt-6">
                         <div className="flex items-center">
                             <MapPin className="h-5 w-5 mr-2 opacity-80" />

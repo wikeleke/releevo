@@ -2,10 +2,22 @@
 const Business = require('../models/Business');
 const slugify = require('slugify');
 const getStripe = require('../config/stripe');
+const { publicListingLabel, maskedListingDescription } = require('../utils/listingMask');
 
 const normalizeRole = (rawRole) => {
     if (typeof rawRole !== 'string') return '';
     return rawRole.trim().toLowerCase();
+};
+
+const canSeeListingIdentity = (user, business) => {
+    if (!user || !business) return false;
+    const role = normalizeRole(user.role);
+    if (role === 'admin') return true;
+    if (user.isPremium) return true;
+    const sidRaw = business.sellerId;
+    const sid = sidRaw?._id || sidRaw;
+    if (sid && String(sid) === String(user._id)) return true;
+    return false;
 };
 
 // @desc    Create new business listing (seller only)
@@ -54,8 +66,23 @@ exports.getBusinesses = async (req, res) => {
             if (minPrice) filter['financials.askingPrice'].$gte = Number(minPrice);
             if (maxPrice) filter['financials.askingPrice'].$lte = Number(maxPrice);
         }
-        const businesses = await Business.find(filter).select('title slug description category sector giro size location financials status');
-        res.json(businesses);
+        const businesses = await Business.find(filter)
+            .select('title slug description category sector giro size location financials status sellerId')
+            .lean();
+
+        const payload = businesses.map((b) => {
+            if (canSeeListingIdentity(req.user, b)) {
+                return b;
+            }
+            return {
+                ...b,
+                title: publicListingLabel(b),
+                description: maskedListingDescription(b),
+                isTitleMasked: true,
+            };
+        });
+
+        res.json(payload);
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Server error' });
@@ -69,19 +96,6 @@ exports.getBusinessDetail = async (req, res) => {
     try {
         const business = await Business.findOne({ slug: req.params.slug }).populate('sellerId', 'email role');
         if (!business) return res.status(404).json({ message: 'Business not found' });
-        const response = {
-            title: business.title,
-            slug: business.slug,
-            description: business.description,
-            category: business.category,
-            sector: business.sector,
-            giro: business.giro,
-            size: business.size,
-            location: business.location,
-            financials: business.financials,
-            status: business.status,
-        };
-
         const role = normalizeRole(req.user?.role);
         const sellerRef = business.sellerId?._id || business.sellerId;
         const isOwner =
@@ -89,7 +103,23 @@ exports.getBusinessDetail = async (req, res) => {
         const canViewConfidential = Boolean(
             req.user && (req.user.isPremium || role === 'admin' || isOwner)
         );
-        response.canViewConfidential = canViewConfidential;
+
+        const bPlain = business.toObject ? business.toObject() : business;
+
+        const response = {
+            title: canViewConfidential ? business.title : publicListingLabel(bPlain),
+            slug: business.slug,
+            description: canViewConfidential ? business.description : maskedListingDescription(bPlain),
+            category: business.category,
+            sector: business.sector,
+            giro: business.giro,
+            size: business.size,
+            location: business.location,
+            financials: business.financials,
+            status: business.status,
+            isTitleMasked: !canViewConfidential,
+            canViewConfidential,
+        };
 
         // Premium users and admins can always view confidential listing details.
         if (canViewConfidential) {

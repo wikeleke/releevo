@@ -17,8 +17,8 @@ const router = express.Router();
 // Private dashboard route (MUST be before /:slug to avoid collision)
 router.get('/dashboard', protect, getDashboardBusinesses);
 
-// Public routes
-router.get('/', getBusinesses);
+// Public routes (auth opcional: admin / comprador premium / dueño ven nombre real en listado)
+router.get('/', protect.optionalAttachUser, getBusinesses);
 router.get('/:slug', protect, getBusinessDetail); // protect to get user info for premium check
 
 // Seller/Admin routes

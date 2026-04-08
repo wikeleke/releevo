@@ -98,4 +98,24 @@ const protectUser = async (req, res, next) => {
 
 const protect = [requireAuth(), protectUser];
 
+/** Añade req.user si hay sesión Clerk y existe en Mongo; no exige login (para listados públicos con reglas por rol). */
+const optionalAttachUser = async (req, res, next) => {
+    req.user = null;
+    try {
+        const auth = getAuth(req);
+        const clerkId = auth?.userId;
+        if (!clerkId) return next();
+
+        const user = await User.findOne({ clerkId }).lean();
+        if (user) {
+            req.user = user;
+        }
+        next();
+    } catch {
+        next();
+    }
+};
+
+protect.optionalAttachUser = optionalAttachUser;
+
 module.exports = protect;
