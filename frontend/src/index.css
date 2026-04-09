@@ -6,3 +6,70 @@ body {
   background-color: theme('colors.background');
   color: theme('colors.oxford');
 }
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/**
+ * Estilo inspirado en Pipedrive (CRM B2B). Nota: utilidades custom (shadow-pd, line)
+ * no deben usarse dentro de @apply; usa theme() en CSS plano.
+ */
+@layer components {
+  .pd-label {
+    @apply mb-1.5 block text-[13px] font-semibold text-dark-700;
+  }
+
+  /* No uses @apply pd-input en otro componente: Tailwind no resuelve clases custom así. */
+  .pd-input,
+  .pd-select {
+    @apply w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-oxford transition-colors
+      duration-150 placeholder:text-dark-300 hover:border-dark-500/25 focus:border-brand-900 focus:outline-none
+      focus:ring-2 focus:ring-brand-900/15;
+    border-color: theme('colors.line');
+    box-shadow: theme('boxShadow.pd');
+  }
+
+  .pd-select {
+    @apply cursor-pointer appearance-none bg-[length:14px] bg-[right_10px_center] bg-no-repeat pr-9;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' viewBox='0 0 24 24' stroke='%2371727A'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  }
+
+  .pd-card {
+    @apply rounded-xl border bg-white;
+    border-color: theme('colors.line');
+    box-shadow: theme('boxShadow.pd');
+  }
+
+  .pd-card-interactive {
+    @apply rounded-xl border bg-white transition-shadow duration-150;
+    border-color: theme('colors.line');
+    box-shadow: theme('boxShadow.pd');
+  }
+
+  .pd-card-interactive:hover {
+    box-shadow: theme('boxShadow.pd-md');
+  }
+
+  .pd-btn-primary {
+    @apply inline-flex items-center justify-center rounded-lg bg-brand-900 px-4 py-2.5 text-sm font-semibold text-white
+      transition-all duration-150 hover:bg-brand-700 focus:outline-none focus-visible:ring-2
+      focus-visible:ring-brand-900 focus-visible:ring-offset-2;
+    box-shadow: theme('boxShadow.pd');
+  }
+
+  .pd-btn-secondary {
+    @apply inline-flex items-center justify-center rounded-lg border bg-white px-4 py-2.5 text-sm font-semibold text-oxford
+      transition-all duration-150 hover:bg-light-100 focus:outline-none focus-visible:ring-2
+      focus-visible:ring-brand-900/20 focus-visible:ring-offset-2;
+    border-color: theme('colors.line');
+    box-shadow: theme('boxShadow.pd');
+  }
+
+  .pd-nav-link {
+    @apply text-sm font-semibold text-dark-700 transition-colors duration-150 hover:text-brand-900;
+  }
+}

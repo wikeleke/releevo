@@ -95,7 +95,7 @@ const Inbox = () => {
     if (!isLoaded) {
         return (
             <div className="min-h-screen flex items-center justify-center">
-                <Loader2 className="h-10 w-10 text-marine animate-spin" />
+                <Loader2 className="h-10 w-10 text-brand-900 animate-spin" />
             </div>
         );
     }
@@ -109,25 +109,25 @@ const Inbox = () => {
     return (
         <div className="max-w-6xl mx-auto px-4 py-8 min-h-[calc(100vh-5rem)]">
             <div className="mb-6">
-                <Link to="/dashboard" className="inline-flex items-center text-sm text-marine font-medium hover:underline">
+                <Link to="/dashboard" className="inline-flex items-center text-sm text-brand-900 font-medium hover:underline">
                     <ChevronLeft className="w-4 h-4 mr-1" /> Panel
                 </Link>
                 <h1 className="text-3xl font-extrabold text-oxford mt-2 flex items-center gap-2">
-                    <Mail className="w-8 h-8 text-marine" />
+                    <Mail className="w-8 h-8 text-brand-900" />
                     Mensajes
                 </h1>
                 <p className="text-gray-500 text-sm mt-1">Compradores premium y vendedores conectan aquí.</p>
             </div>
 
-            <div className="flex flex-col lg:flex-row gap-4 bg-white border border-gray-200 rounded-2xl overflow-hidden min-h-[480px]">
-                <aside className={`lg:w-[320px] border-b lg:border-b-0 lg:border-r border-gray-200 flex flex-col ${conversationId ? 'hidden lg:flex' : 'flex'}`}>
+            <div className="flex flex-col lg:flex-row gap-4 bg-white rounded-xl border border-line overflow-hidden min-h-[480px]">
+                <aside className={`lg:w-[320px] border-b lg:border-b-0 lg:border-r border-line flex flex-col ${conversationId ? 'hidden lg:flex' : 'flex'}`}>
                     <div className="p-3 border-b border-gray-100 font-bold text-gray-700 text-sm uppercase tracking-wide">
                         Conversaciones ({conversations.length})
                     </div>
                     <div className="overflow-y-auto flex-1 max-h-[50vh] lg:max-h-[calc(100vh-16rem)]">
                         {loading && conversations.length === 0 ? (
                             <div className="flex justify-center py-12">
-                                <Loader2 className="h-8 w-8 text-marine animate-spin" />
+                                <Loader2 className="h-8 w-8 text-brand-900 animate-spin" />
                             </div>
                         ) : conversations.length === 0 ? (
                             <p className="p-4 text-gray-500 text-sm">Aún no tienes conversaciones.</p>
@@ -141,7 +141,7 @@ const Inbox = () => {
                                             <button
                                                 type="button"
                                                 onClick={() => navigate(`/inbox/${c._id}`)}
-                                                className={`w-full text-left px-4 py-3 border-b border-gray-50 hover:bg-gray-50 transition-colors ${active ? 'bg-blue-50 border-l-4 border-l-marine' : ''}`}
+                                                className={`w-full text-left px-4 py-3 border-b border-light-100 hover:bg-gray-50 transition-colors ${active ? 'bg-blue-50 border-l-4 border-l-brand-900' : ''}`}
                                             >
                                                 <div className="font-semibold text-gray-900 truncate">{title}</div>
                                                 <div className="text-xs text-gray-500 truncate">{c.peerLabel}</div>
@@ -149,7 +149,7 @@ const Inbox = () => {
                                                     <div className="text-xs text-gray-400 truncate mt-1">{c.lastMessagePreview}</div>
                                                 ) : null}
                                                 {(c.unreadCount > 0) ? (
-                                                    <span className="inline-block mt-1 text-[10px] font-bold bg-marine text-white px-2 py-0.5 rounded-full">{c.unreadCount} nuevo</span>
+                                                    <span className="inline-block mt-1 text-[10px] font-bold bg-brand-900 text-white px-2 py-0.5 rounded-full">{c.unreadCount} nuevo</span>
                                                 ) : null}
                                             </button>
                                         </li>
@@ -170,7 +170,7 @@ const Inbox = () => {
                             <div className="p-4 border-b border-gray-100 flex items-center gap-3">
                                 <button
                                     type="button"
-                                    className="lg:hidden p-2 rounded-lg border border-gray-200"
+                                    className="lg:hidden p-2 rounded-lg border border-line"
                                     onClick={() => navigate('/inbox')}
                                     aria-label="Volver al listado"
                                 >
@@ -183,7 +183,7 @@ const Inbox = () => {
                                 {thread?.business?.slug ? (
                                     <Link
                                         to={`/business/${thread.business.slug}`}
-                                        className="text-sm font-bold text-marine hover:underline shrink-0"
+                                        className="text-sm font-bold text-brand-900 hover:underline shrink-0"
                                     >
                                         Ver listado
                                     </Link>
@@ -201,8 +201,8 @@ const Inbox = () => {
                                         >
                                             <div
                                                 className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm shadow-sm ${m.fromMe
-                                                    ? 'bg-marine text-white rounded-br-md'
-                                                    : 'bg-white border border-gray-200 text-gray-900 rounded-bl-md'}`}
+                                                    ? 'bg-brand-900 text-white rounded-br-md'
+                                                    : 'bg-white border border-line text-gray-900 rounded-bl-md'}`}
                                             >
                                                 <p className="whitespace-pre-wrap break-words">{m.body}</p>
                                                 <div className={`text-[10px] mt-1 ${m.fromMe ? 'text-blue-100' : 'text-gray-400'}`}>
@@ -220,12 +220,12 @@ const Inbox = () => {
                                     onChange={(e) => setBody(e.target.value)}
                                     placeholder="Escribe un mensaje…"
                                     rows={2}
-                                    className="flex-1 rounded-xl border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-marine/25 outline-none resize-none"
+                                    className="flex-1 rounded-xl border border-line px-3 py-2 text-sm focus:ring-2 focus:ring-brand-900/20 outline-none resize-none"
                                 />
                                 <button
                                     type="submit"
                                     disabled={sending || !body.trim()}
-                                    className="self-end px-4 py-3 bg-marine text-white rounded-xl font-bold hover:bg-blue-900 disabled:opacity-50 flex items-center gap-2"
+                                    className="self-end px-4 py-3 bg-brand-900 text-white rounded-xl font-bold hover:bg-brand-700 disabled:opacity-50 flex items-center gap-2"
                                 >
                                     <Send className="w-4 h-4" />
                                 </button>

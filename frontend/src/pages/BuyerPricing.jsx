@@ -109,9 +109,13 @@ const BuyerPricing = () => {
                                 </p>
 
                                 <div className="text-[48px] font-black text-white mb-2 leading-none">
-                                    $300 <span className="text-xl">USD</span>
-                                    <span className="text-lg text-[#8E8FA3] font-medium ml-2 relative -top-3">/ anual</span>
+                                    $3,499{' '}
+                                    <span className="text-xl">MXN</span>
+                                    <span className="text-lg text-[#8E8FA3] font-medium ml-2 relative -top-3">al año</span>
                                 </div>
+                                <p className="text-[#8E8FA3] text-sm font-medium -mt-1 mb-2">
+                                    Pesos mexicanos · facturación anual
+                                </p>
                                 <p className="text-brand-300 text-sm font-medium mb-8">Recupera la inversión con tu primer cierre.</p>
 
                                 <ul className="space-y-5 mb-12 flex-1">

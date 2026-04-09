@@ -1,6 +1,8 @@
 import React from 'react';
 
-const FilterSidebar = ({ filters, setFilters, applyFilters }) => {
+const fieldSurface = 'bg-light-100 hover:bg-white focus:bg-white';
+
+const FilterSidebar = ({ filters, setFilters, applyFilters, cities = [], citiesLoading = false }) => {
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFilters(prev => ({ ...prev, [name]: value }));
@@ -18,33 +20,39 @@ const FilterSidebar = ({ filters, setFilters, applyFilters }) => {
     };
 
     return (
-        <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm sticky top-24">
-            <h3 className="text-xl font-extrabold text-oxford mb-5 tracking-tight">Filtros</h3>
+        <div className="sticky top-24 rounded-xl border border-line bg-white p-6 shadow-sm">
+            <h3 className="mb-6 text-lg font-semibold text-oxford">Filtros</h3>
 
-            <div className="space-y-5">
-                <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-1.5">Ciudad</label>
-                    <input
-                        type="text"
+            <div className="flex flex-col">
+                <div className="border-b border-line pb-5">
+                    <label className="pd-label">Ciudad</label>
+                    <select
                         name="city"
+                        aria-label="Filtrar por ciudad"
                         value={filters.city || ''}
                         onChange={handleChange}
-                        onKeyDown={handleKeyDown}
-                        placeholder="Ej. Ciudad de Mexico"
-                        className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-marine focus:bg-white text-sm transition-all"
-                    />
+                        disabled={citiesLoading}
+                        className={`pd-select ${fieldSurface} disabled:cursor-not-allowed disabled:opacity-60`}
+                    >
+                        <option value="">
+                            {citiesLoading ? 'Cargando ciudades…' : 'Todas las ciudades'}
+                        </option>
+                        {cities.map((city) => (
+                            <option key={city} value={city}>
+                                {city}
+                            </option>
+                        ))}
+                    </select>
                 </div>
 
-                <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-1.5">
-                        Categoría / sector
-                    </label>
+                <div className="border-b border-line py-5">
+                    <label className="pd-label">Categoría / sector</label>
                     <select
                         name="sector"
                         aria-label="Filtrar por categoría o industria"
                         value={filters.sector || ''}
                         onChange={handleChange}
-                        className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-marine focus:bg-white text-sm transition-all appearance-none cursor-pointer"
+                        className={`pd-select ${fieldSurface}`}
                     >
                         <option value="">Todos los sectores</option>
                         <option value="Retail">Comercio minorista</option>
@@ -57,37 +65,38 @@ const FilterSidebar = ({ filters, setFilters, applyFilters }) => {
                     </select>
                 </div>
 
-                <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-1.5">Rango de precio (USD)</label>
-                    <div className="flex items-center space-x-3">
+                <div className="border-b border-line py-5">
+                    <label className="pd-label">Rango de precio (USD)</label>
+                    <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2">
                         <input
                             type="number"
                             name="minPrice"
                             value={filters.minPrice || ''}
                             onChange={handleChange}
                             onKeyDown={handleKeyDown}
-                            placeholder="Min"
-                            className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-marine focus:bg-white text-sm transition-all"
+                            placeholder="Mín."
+                            className={`pd-input min-w-0 ${fieldSurface}`}
                         />
-                        <span className="text-gray-400 font-medium">-</span>
+                        <span className="shrink-0 px-0.5 text-center text-sm font-medium text-dark-400" aria-hidden>
+                            —
+                        </span>
                         <input
                             type="number"
                             name="maxPrice"
                             value={filters.maxPrice || ''}
                             onChange={handleChange}
                             onKeyDown={handleKeyDown}
-                            placeholder="Max"
-                            className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-marine focus:bg-white text-sm transition-all"
+                            placeholder="Máx."
+                            className={`pd-input min-w-0 ${fieldSurface}`}
                         />
                     </div>
                 </div>
 
-                <button
-                    onClick={handleApply}
-                    className="w-full bg-marine text-white mt-8 py-3 rounded-lg font-bold hover:bg-blue-900 focus:ring-2 focus:ring-offset-2 focus:ring-marine transition-all shadow-sm"
-                >
-                    Aplicar filtros
-                </button>
+                <div className="pt-6">
+                    <button type="button" onClick={handleApply} className="pd-btn-primary w-full py-3 text-base font-semibold">
+                        Aplicar filtros
+                    </button>
+                </div>
             </div>
         </div>
     );

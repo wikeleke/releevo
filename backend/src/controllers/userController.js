@@ -1,3 +1,5 @@
+const crypto = require('crypto');
+const slugify = require('slugify');
 const { clerkClient } = require('@clerk/express');
 const Business = require('../models/Business');
 const { verifyWebsiteUrl } = require('../utils/verifyWebsiteUrl');
@@ -149,6 +151,50 @@ const normalizeEmail = (raw) => {
     return e;
 };
 
+/** Alineado con categorías de listado (CreateListing / mercado) */
+const ONBOARDING_TYPE_TO_CATEGORY = {
+    saas: 'Technology',
+    ecommerce: 'Retail',
+    retail: 'Retail',
+    servicios: 'Services',
+    manufactura: 'Manufacturing',
+    alimentos: 'Food & Beverage',
+    construccion: 'Services',
+    salud: 'Healthcare',
+    educacion: 'Services',
+    logistica: 'Services',
+    hospitalidad: 'Services',
+    agro: 'Services',
+    energia: 'Services',
+    inmobiliario: 'Real Estate',
+    otro: 'Services',
+};
+
+function guessLocationFromAddress(addressLine) {
+    const parts = addressLine
+        .split(',')
+        .map((p) => p.trim())
+        .filter(Boolean);
+    if (parts.length >= 2) {
+        return {
+            city: parts[parts.length - 2],
+            state: parts[parts.length - 1],
+        };
+    }
+    return { city: '', state: '' };
+}
+
+async function assignUniqueBusinessSlug(title) {
+    const base = slugify(String(title).trim(), { lower: true, strict: true }) || 'empresa';
+    let slug = base;
+    for (let i = 0; i < 12; i += 1) {
+        const exists = await Business.findOne({ slug }).select('_id').lean();
+        if (!exists) return slug;
+        slug = `${base}-${crypto.randomBytes(3).toString('hex')}`;
+    }
+    throw new Error('Could not allocate unique slug');
+}
+
 exports.completeSellerOnboarding = async (req, res) => {
     try {
         const user = req.user;
@@ -217,9 +263,41 @@ exports.completeSellerOnboarding = async (req, res) => {
             contactEmail = parsed;
         }
 
+        const trimmedType = companyType.trim();
+        const companyNameClean = companyName.trim();
+        const category =
+            ONBOARDING_TYPE_TO_CATEGORY[trimmedType] || 'Services';
+        const typeMeta = COMPANY_TYPES.find((t) => t.value === trimmedType);
+        const sectorLabel = typeMeta ? typeMeta.label : 'Negocio';
+        const slug = await assignUniqueBusinessSlug(companyNameClean);
+        const location = guessLocationFromAddress(address.trim());
+
+        const draftListing = new Business({
+            title: companyNameClean,
+            slug,
+            description:
+                'Listado iniciado al completar tu registro como vendedor. Completa precio, descripcion publica y detalles del negocio para enviarlo a revision.',
+            category,
+            sector: sectorLabel,
+            giro: sectorLabel,
+            size: 'Medium',
+            location,
+            financials: {},
+            confidentialData: {
+                businessName: companyNameClean,
+                exactAddress: address.trim(),
+                contactPhone: contactPhone.trim(),
+                contactEmail,
+                website: siteCheck.url,
+            },
+            sellerId: user._id,
+            status: 'pending',
+        });
+        await draftListing.save();
+
         user.sellerCompanyProfile = {
-            companyType: companyType.trim(),
-            companyName: companyName.trim(),
+            companyType: trimmedType,
+            companyName: companyNameClean,
             website: siteCheck.url,
             websiteVerifiedAt: new Date(),
             owners,
@@ -232,7 +310,7 @@ exports.completeSellerOnboarding = async (req, res) => {
         await user.save();
         await mergeClerkRole(user.clerkId, 'seller');
 
-        res.json({ ok: true, role: user.role });
+        res.json({ ok: true, role: user.role, businessId: draftListing._id });
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Server error' });

@@ -96,6 +96,31 @@ exports.getBusinesses = async (req, res) => {
     }
 };
 
+// @desc    Ciudades con al menos un listado publicado (para filtros del mercado)
+// @route   GET /api/business/cities
+// @access  Public
+exports.getPublishedCities = async (req, res) => {
+    try {
+        const raw = await Business.distinct('location.city', {
+            status: 'published',
+            'location.city': { $exists: true, $nin: [null, ''] },
+        });
+        const seen = new Set();
+        const cities = [];
+        for (const c of raw) {
+            const t = String(c ?? '').trim();
+            if (!t || seen.has(t)) continue;
+            seen.add(t);
+            cities.push(t);
+        }
+        cities.sort((a, b) => a.localeCompare(b, 'es', { sensitivity: 'base' }));
+        res.json(cities);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
 // @desc    Get business detail (public fields always, confidential if premium/admin)
 // @route   GET /api/business/:slug
 // @access  Public (premium guard inside)

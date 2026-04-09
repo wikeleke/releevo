@@ -11,55 +11,57 @@ const PaywallModal = ({ onClose, pricingPath = '/pricing/buyers' }) => {
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden relative">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-4 animate-in fade-in duration-200">
+            <div className="relative w-full max-w-md overflow-hidden rounded-xl border border-line bg-white shadow-pd-dropdown">
                 <button
+                    type="button"
                     onClick={onClose}
-                    className="absolute top-4 right-4 text-white/70 hover:text-white transition-colors z-10"
+                    className="absolute right-4 top-4 z-10 text-white/90 transition-colors hover:text-white"
                 >
                     <X className="h-6 w-6" />
                 </button>
 
-                <div className="bg-marine text-white p-8 text-center relative overflow-hidden">
-                    <div className="absolute top-0 left-0 w-full h-full opacity-20 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-300 via-marine to-marine pointer-events-none"></div>
-                    <div className="w-20 h-20 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-5 backdrop-blur-md relative z-10">
-                        <Lock className="h-10 w-10 text-white" />
+                <div className="relative overflow-hidden bg-brand-900 px-8 pb-8 pt-10 text-center text-white">
+                    <div className="pointer-events-none absolute inset-0 opacity-20 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-white/40 via-brand-900 to-brand-900" />
+                    <div className="relative z-10 mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-lg bg-white/15">
+                        <Lock className="h-8 w-8 text-white" />
                     </div>
-                    <h2 className="text-2xl font-extrabold mb-2 relative z-10 tracking-tight">Se requiere acceso avanzado</h2>
-                    <p className="text-blue-100/90 font-medium relative z-10">Desbloquea datos confidenciales del negocio</p>
+                    <h2 className="relative z-10 mb-2 text-xl font-semibold tracking-tight">Se requiere acceso avanzado</h2>
+                    <p className="relative z-10 text-[15px] font-normal text-white/90">Desbloquea datos confidenciales del negocio</p>
                 </div>
 
                 <div className="p-8">
-                    <ul className="space-y-4 mb-8">
-                        <li className="flex items-start">
-                            <ShieldCheck className="h-5 w-5 text-green-500 mr-3 flex-shrink-0 mt-0.5" />
-                            <span className="text-gray-700 font-medium">Ver el nombre legal real del negocio</span>
+                    <ul className="mb-8 space-y-3.5">
+                        <li className="flex items-start gap-3">
+                            <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-green-600" />
+                            <span className="text-[15px] font-medium leading-snug text-dark-700">Ver el nombre legal real del negocio</span>
                         </li>
-                        <li className="flex items-start">
-                            <ShieldCheck className="h-5 w-5 text-green-500 mr-3 flex-shrink-0 mt-0.5" />
-                            <span className="text-gray-700 font-medium">Acceder a la direccion exacta</span>
+                        <li className="flex items-start gap-3">
+                            <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-green-600" />
+                            <span className="text-[15px] font-medium leading-snug text-dark-700">Acceder a la direccion exacta</span>
                         </li>
-                        <li className="flex items-start">
-                            <ShieldCheck className="h-5 w-5 text-green-500 mr-3 flex-shrink-0 mt-0.5" />
-                            <span className="text-gray-700 font-medium">Obtener datos directos de contacto del dueno</span>
+                        <li className="flex items-start gap-3">
+                            <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-green-600" />
+                            <span className="text-[15px] font-medium leading-snug text-dark-700">Obtener datos directos de contacto del dueno</span>
                         </li>
-                        <li className="flex items-start">
-                            <ShieldCheck className="h-5 w-5 text-green-500 mr-3 flex-shrink-0 mt-0.5" />
-                            <span className="text-gray-700 font-medium">Contactar al vendedor</span>
+                        <li className="flex items-start gap-3">
+                            <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-green-600" />
+                            <span className="text-[15px] font-medium leading-snug text-dark-700">Contactar al vendedor</span>
                         </li>
                     </ul>
 
                     <button
                         type="button"
                         onClick={handleAcquireMembership}
-                        className="w-full bg-marine text-white py-4 rounded-xl font-bold hover:bg-blue-900 transition-colors shadow-lg flex justify-center items-center group"
+                        className="group flex w-full items-center justify-center rounded-xl bg-marine py-4 font-bold text-white shadow-lg transition-colors hover:bg-blue-900"
                     >
-                        <Lock className="h-4 w-4 mr-2 group-hover:scale-110 transition-transform" />
+                        <Lock className="mr-2 h-4 w-4 transition-transform group-hover:scale-110" />
                         Adquirir membresia
                     </button>
 
-                    <p className="text-center text-xs text-gray-400 mt-5">
-                        Los planes avanzados inician desde $29/mes. Cancela en cualquier momento.
+                    <p className="mt-5 text-center text-xs leading-relaxed text-dark-300">
+                        Membresía comprador: <span className="font-semibold text-dark-500">$3,499 MXN al año</span>.
+                        Puedes cancelar la renovación cuando quieras.
                     </p>
                 </div>
             </div>

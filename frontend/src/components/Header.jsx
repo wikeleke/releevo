@@ -1,9 +1,47 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { User, LogOut, Menu, ChevronDown, FilePlus, Handshake, Star, Mail, Bell, BellRing, X, UserCircle, Settings, CreditCard } from 'lucide-react';
+import {
+    User,
+    LogOut,
+    Menu,
+    ChevronDown,
+    FilePlus,
+    Handshake,
+    Star,
+    Mail,
+    Bell,
+    BellRing,
+    X,
+    UserCircle,
+    Settings,
+    CreditCard,
+    ChevronRight,
+} from 'lucide-react';
 import { openBillingOrSubscribe } from '../services/billingPortal';
 import { SignedIn, SignedOut, SignInButton, useClerk, useUser, useAuth } from "@clerk/clerk-react";
 import { useMessageNotificationsContext } from '../context/MessageNotificationsContext.jsx';
+
+/** Fila de submenú estilo Pipedrive: lista compacta, sin tarjetas tipo marketplace. */
+const NavFlyoutItem = ({ icon: Icon, title, description, onClick }) => (
+    <button
+        type="button"
+        onClick={onClick}
+        className="group flex w-full items-start gap-3 rounded-lg px-2.5 py-2 text-left transition-colors hover:bg-light-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-900/20"
+    >
+        <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-line bg-white text-dark-500 transition-colors group-hover:border-dark-500/15 group-hover:text-brand-900">
+            <Icon className="h-4 w-4" strokeWidth={2} />
+        </span>
+        <span className="min-w-0 flex-1">
+            <span className="flex items-center gap-1">
+                <span className="text-[13px] font-semibold text-oxford">{title}</span>
+                <ChevronRight className="h-3.5 w-3.5 shrink-0 text-dark-300 opacity-0 transition-opacity group-hover:opacity-100" />
+            </span>
+            {description ? (
+                <span className="mt-0.5 block text-[12px] leading-snug text-dark-500">{description}</span>
+            ) : null}
+        </span>
+    </button>
+);
 
 const Header = () => {
     const { signOut } = useClerk();
@@ -66,17 +104,17 @@ const Header = () => {
 
     return (
         <>
-        <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <header className="sticky top-0 z-50 border-b border-line bg-white shadow-pd">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex justify-between py-4 items-center">
+                <div className="flex justify-between py-3 md:py-3.5 items-center">
                     <div className="flex items-center">
                         <Link to="/" className="flex items-center group">
                             <img src="/logo.png" alt="Releevo - Continuidad de los Negocios" className="h-16 md:h-20 w-auto object-contain group-hover:opacity-90 transition-opacity" />
                         </Link>
                     </div>
 
-                    <nav className="hidden md:flex space-x-8 relative items-center" ref={megaMenuRef}>
-                        <Link to="/marketplace" className="text-dark-700 hover:text-brand-900 font-bold transition-colors">Mercado</Link>
+                    <nav className="hidden md:flex gap-6 lg:gap-8 relative items-center" ref={megaMenuRef}>
+                        <Link to="/marketplace" className="pd-nav-link">Mercado</Link>
 
                         {/* Vendedores Dropdown Trigger */}
                         <div
@@ -85,46 +123,47 @@ const Header = () => {
                             onMouseLeave={() => setIsMegaMenuOpen(false)}
                         >
                             <button
+                                type="button"
                                 onClick={() => setIsMegaMenuOpen(!isMegaMenuOpen)}
-                                className={`flex items-center gap-1.5 font-bold transition-colors focus:outline-none ${isMegaMenuOpen ? 'text-brand-900' : 'text-dark-700 hover:text-brand-900'}`}
+                                className={`flex items-center gap-1.5 pd-nav-link focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-900/25 rounded-md ${isMegaMenuOpen ? 'text-brand-900' : ''}`}
                             >
                                 Vendedores
-                                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${isMegaMenuOpen ? 'rotate-180 text-brand-900' : 'text-dark-400'}`} />
+                                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${isMegaMenuOpen ? 'rotate-180 text-brand-900' : 'text-dark-300'}`} />
                             </button>
 
                             {/* Mega Menu Panel */}
                             {isMegaMenuOpen && (
-                                <div className="absolute left-[-20px] md:left-[-40px] top-full pt-6 w-[95vw] md:w-[70vw] lg:w-[600px] z-50 cursor-default transition-all duration-300">
-                                    <div className="bg-white rounded-[24px] shadow-[0_20px_60px_rgba(0,0,0,0.1)] border border-light-300 p-5 md:p-6">
-                                        <h2 className="text-2xl font-extrabold text-[#000000] mb-5">Vendedores</h2>
-
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
-                                            {/* Card 1 */}
-                                            <div onClick={() => { setIsMegaMenuOpen(false); navigate('/signup'); }} className="bg-[#F8F9FE] p-5 md:p-6 rounded-[20px] cursor-pointer hover:bg-[#F2F4FC] transition-colors border border-transparent hover:border-brand-300 group flex flex-col h-full">
-                                                <div className="w-[44px] h-[44px] rounded-full bg-[#ECF1FF] flex items-center justify-center text-brand-900 mb-5 shadow-sm">
-                                                    <FilePlus strokeWidth={2.5} className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                                                </div>
-                                                <h3 className="text-[17px] font-extrabold text-[#111124] mb-2 leading-tight">Publica tu Empresa</h3>
-                                                <p className="text-[#393A47] text-[13px] md:text-[14px] font-medium mb-3 leading-snug flex-grow">Crea y publica el listado de tu compañía frente a más de 30k+ compradores reales.</p>
-                                                <p className="text-[#7A7B8B] text-[12px] italic mt-auto">Vende con nuestras herramientas expertas.</p>
-                                            </div>
-
-                                            {/* Card 2 */}
-                                            <div onClick={() => { setIsMegaMenuOpen(false); navigate('/signup'); }} className="bg-[#F8F9FE] p-5 md:p-6 rounded-[20px] cursor-pointer hover:bg-[#F2F4FC] transition-colors border border-transparent hover:border-brand-300 group flex flex-col h-full">
-                                                <div className="w-[44px] h-[44px] rounded-full bg-[#ECF1FF] flex items-center justify-center text-brand-900 mb-5 shadow-sm">
-                                                    <Handshake strokeWidth={2.5} className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                                                </div>
-                                                <h3 className="text-[17px] font-extrabold text-[#111124] mb-2 leading-tight">Ayuda para vender</h3>
-                                                <p className="text-[#393A47] text-[13px] md:text-[14px] font-medium mb-3 leading-snug flex-grow">Servicios de asesoría de adquisición a la medida para fundadores locales.</p>
-                                                <p className="text-[#7A7B8B] text-[12px] italic mt-auto">Obtén el mejor precio con ayuda.</p>
-                                            </div>
+                                <div className="absolute left-0 top-full z-50 w-[min(100vw-2rem,20rem)] cursor-default pt-2 transition-opacity duration-150 md:left-1/2 md:-translate-x-1/2">
+                                    <div className="overflow-hidden rounded-lg border border-line bg-white py-1.5 shadow-pd-dropdown">
+                                        <p className="px-3 pb-1 pt-1 text-[11px] font-semibold uppercase tracking-wider text-dark-400">
+                                            Vendedores
+                                        </p>
+                                        <div className="px-1.5 pb-1">
+                                            <NavFlyoutItem
+                                                icon={FilePlus}
+                                                title="Publica tu empresa"
+                                                description="Crea tu listado y llega a compradores acreditados."
+                                                onClick={() => {
+                                                    setIsMegaMenuOpen(false);
+                                                    navigate('/signup');
+                                                }}
+                                            />
+                                            <NavFlyoutItem
+                                                icon={Handshake}
+                                                title="Ayuda para vender"
+                                                description="Asesoría para preparar y cerrar la venta de tu negocio."
+                                                onClick={() => {
+                                                    setIsMegaMenuOpen(false);
+                                                    navigate('/signup');
+                                                }}
+                                            />
                                         </div>
                                     </div>
                                 </div>
                             )}
                         </div>
 
-                        <Link to="/buyers" className="text-dark-700 hover:text-brand-900 font-bold transition-colors">Compradores</Link>
+                        <Link to="/buyers" className="pd-nav-link">Compradores</Link>
 
                         {/* Pricing Dropdown Trigger */}
                         <div
@@ -134,39 +173,40 @@ const Header = () => {
                             onMouseLeave={() => setIsPricingMegaMenuOpen(false)}
                         >
                             <button
+                                type="button"
                                 onClick={() => setIsPricingMegaMenuOpen(!isPricingMegaMenuOpen)}
-                                className={`flex items-center gap-1.5 font-bold transition-colors focus:outline-none ${isPricingMegaMenuOpen ? 'text-brand-900' : 'text-dark-700 hover:text-brand-900'}`}
+                                className={`flex items-center gap-1.5 pd-nav-link focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-900/25 rounded-md ${isPricingMegaMenuOpen ? 'text-brand-900' : ''}`}
                             >
                                 Precio
-                                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${isPricingMegaMenuOpen ? 'rotate-180 text-brand-900' : 'text-dark-400'}`} />
+                                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${isPricingMegaMenuOpen ? 'rotate-180 text-brand-900' : 'text-dark-300'}`} />
                             </button>
 
                             {/* Pricing Mega Menu Panel */}
                             {isPricingMegaMenuOpen && (
-                                <div className="absolute right-[-20px] md:right-[-40px] xl:right-0 top-full pt-6 w-[95vw] md:w-[70vw] lg:w-[600px] z-50 cursor-default transition-all duration-300">
-                                    <div className="bg-white rounded-[24px] shadow-[0_20px_60px_rgba(0,0,0,0.1)] border border-light-300 p-5 md:p-6">
-                                        <h2 className="text-2xl font-extrabold text-[#000000] mb-5">Precio</h2>
-
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
-                                            {/* Sellers Pricing */}
-                                            <div onClick={() => { setIsPricingMegaMenuOpen(false); navigate('/pricing/sellers'); }} className="bg-[#F8F9FE] p-5 md:p-6 rounded-[20px] cursor-pointer hover:bg-[#F2F4FC] transition-colors border border-transparent hover:border-brand-300 group flex flex-col h-full">
-                                                <div className="w-[44px] h-[44px] rounded-full bg-[#ECF1FF] flex items-center justify-center text-brand-900 mb-5 shadow-sm">
-                                                    <FilePlus strokeWidth={2.5} className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                                                </div>
-                                                <h3 className="text-[17px] font-extrabold text-[#111124] mb-2 leading-tight">Vendedores</h3>
-                                                <p className="text-[#393A47] text-[13px] md:text-[14px] font-medium mb-3 leading-snug flex-grow">Vende tu startup con un plan de adquisición adaptado a tus objetivos de salida.</p>
-                                                <p className="text-[#7A7B8B] text-[12px] italic mt-auto">Publica y vende tu negocio con nosotros.</p>
-                                            </div>
-
-                                            {/* Buyers Pricing */}
-                                            <div onClick={() => { setIsPricingMegaMenuOpen(false); navigate('/pricing/buyers'); }} className="bg-[#F8F9FE] p-5 md:p-6 rounded-[20px] cursor-pointer hover:bg-[#F2F4FC] transition-colors border border-transparent hover:border-brand-300 group flex flex-col h-full">
-                                                <div className="w-[44px] h-[44px] rounded-full bg-[#ECF1FF] flex items-center justify-center text-brand-900 mb-5 shadow-sm">
-                                                    <Star strokeWidth={2.5} className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                                                </div>
-                                                <h3 className="text-[17px] font-extrabold text-[#111124] mb-2 leading-tight">Compradores</h3>
-                                                <p className="text-[#393A47] text-[13px] md:text-[14px] font-medium mb-3 leading-snug flex-grow">Visualiza los planes que te conectan con fundadores reales para vender.</p>
-                                                <p className="text-[#7A7B8B] text-[12px] italic mt-auto">Inicia una adquisición privada hoy.</p>
-                                            </div>
+                                <div className="absolute right-0 top-full z-50 w-[min(100vw-2rem,20rem)] cursor-default pt-2 transition-opacity duration-150">
+                                    <div className="overflow-hidden rounded-lg border border-line bg-white py-1.5 shadow-pd-dropdown">
+                                        <p className="px-3 pb-1 pt-1 text-[11px] font-semibold uppercase tracking-wider text-dark-400">
+                                            Precios
+                                        </p>
+                                        <div className="px-1.5 pb-1">
+                                            <NavFlyoutItem
+                                                icon={FilePlus}
+                                                title="Planes para vendedores"
+                                                description="Publicación, visibilidad y herramientas para cerrar."
+                                                onClick={() => {
+                                                    setIsPricingMegaMenuOpen(false);
+                                                    navigate('/pricing/sellers');
+                                                }}
+                                            />
+                                            <NavFlyoutItem
+                                                icon={Star}
+                                                title="Planes para compradores"
+                                                description="Acceso al mercado y contacto con vendedores."
+                                                onClick={() => {
+                                                    setIsPricingMegaMenuOpen(false);
+                                                    navigate('/pricing/buyers');
+                                                }}
+                                            />
                                         </div>
                                     </div>
                                 </div>
@@ -180,7 +220,7 @@ const Header = () => {
                             <>
                                 <Link
                                     to="/inbox"
-                                    className="relative hidden md:flex items-center justify-center w-10 h-10 rounded-full text-[#2B2B43] hover:bg-[#F7F8FC] border border-transparent hover:border-[#2B2B43]/20 transition-colors"
+                                    className="relative hidden md:flex h-9 w-9 items-center justify-center rounded-lg border border-transparent text-oxford transition-colors hover:border-line hover:bg-light-100"
                                     title="Notificaciones"
                                     aria-label="Notificaciones"
                                 >
@@ -193,7 +233,7 @@ const Header = () => {
                                 </Link>
                                 <Link
                                     to="/inbox"
-                                    className="relative hidden md:flex items-center justify-center w-10 h-10 rounded-full text-[#2B2B43] hover:bg-[#F7F8FC] border border-transparent hover:border-[#2B2B43]/20 transition-colors"
+                                    className="relative hidden md:flex h-9 w-9 items-center justify-center rounded-lg border border-transparent text-oxford transition-colors hover:border-line hover:bg-light-100"
                                     title="Mensajes"
                                     aria-label="Mensajes"
                                 >
@@ -202,30 +242,31 @@ const Header = () => {
                             </>
                         ) : null}
                         {/* Free valuation text link - Hidden on mobile, moved to dropdown */}
-                        <Link to="/valuation" className="hidden md:block text-dark-500 hover:text-brand-900 font-bold text-[15px] transition-colors">
+                        <Link to="/valuation" className="hidden rounded-lg px-3 py-2 text-[15px] font-semibold text-dark-700 transition-colors hover:bg-light-100 hover:text-brand-900 md:block">
                             Valúa tu compañía
                         </Link>
 
                         {/* Dropdown Menu Container */}
                         <div className="relative" ref={menuRef}>
                             <button
+                                type="button"
                                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                                className="flex items-center justify-center gap-3 px-2 py-1.5 bg-[#F7F8FC] border border-[#2B2B43] rounded-full hover:shadow-md transition-shadow focus:outline-none"
+                                className="flex items-center justify-center gap-2 rounded-lg border border-line bg-white px-2 py-1 shadow-pd transition-shadow hover:shadow-pd-md focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-900/25"
                             >
-                                <Menu className="w-5 h-5 text-dark-900 ml-2" />
+                                <Menu className="ml-1 h-5 w-5 text-oxford" />
                                 <SignedIn>
-                                    <span className="hidden md:block text-[13px] font-bold text-dark-700 max-w-[120px] truncate">
+                                    <span className="hidden max-w-[120px] truncate text-[13px] font-semibold text-dark-700 md:block">
                                         {userDisplayName}
                                     </span>
                                 </SignedIn>
-                                <div className="bg-[#D3E4FF] w-9 h-9 rounded-full flex items-center justify-center">
-                                    <User className="w-5 h-5 text-[#19192D]" fill="currentColor" />
+                                <div className="flex h-9 w-9 items-center justify-center rounded-md bg-brand-100">
+                                    <User className="h-5 w-5 text-oxford" fill="currentColor" />
                                 </div>
                             </button>
 
                             {/* Dropdown Panel */}
                             {isMenuOpen && (
-                                <div className="absolute right-0 mt-3 w-64 md:w-56 bg-white rounded-[20px] shadow-[0_10px_40px_rgba(0,0,0,0.15)] border border-light-300 py-3 z-50 overflow-y-auto max-h-[85vh]">
+                                <div className="absolute right-0 z-50 mt-2 max-h-[85vh] w-64 overflow-y-auto rounded-xl border border-line bg-white py-2 shadow-pd-dropdown md:w-56">
 
                                     {/* Mobile Only Navigation Menu */}
                                     <div className="md:hidden">
@@ -233,32 +274,32 @@ const Header = () => {
                                             Mercado
                                         </Link>
 
-                                        <div className="px-6 py-2 text-[11px] font-bold text-dark-500 tracking-wider uppercase mt-1">Vendedores</div>
-                                        <Link to="/signup" onClick={() => setIsMenuOpen(false)} className="block px-6 py-2.5 text-[15px] font-medium text-[#7A7B8B] hover:bg-light-100 transition-colors">
-                                            Publica tu Empresa
+                                        <div className="mt-1 px-6 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-dark-400">Vendedores</div>
+                                        <Link to="/signup" onClick={() => setIsMenuOpen(false)} className="block rounded-md px-6 py-2 text-[13px] font-semibold text-dark-700 hover:bg-light-100">
+                                            Publica tu empresa
                                         </Link>
-                                        <Link to="/signup" onClick={() => setIsMenuOpen(false)} className="block px-6 py-2.5 text-[15px] font-medium text-[#7A7B8B] hover:bg-light-100 transition-colors">
+                                        <Link to="/signup" onClick={() => setIsMenuOpen(false)} className="block rounded-md px-6 py-2 text-[13px] font-semibold text-dark-700 hover:bg-light-100">
                                             Ayuda para vender
                                         </Link>
 
-                                        <div className="px-6 py-2 text-[11px] font-bold text-dark-500 tracking-wider uppercase mt-2">Compradores</div>
-                                        <Link to="/buyers" onClick={() => setIsMenuOpen(false)} className="block px-6 py-2.5 text-[15px] font-medium text-[#7A7B8B] hover:bg-light-100 transition-colors">
+                                        <div className="mt-2 px-6 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-dark-400">Compradores</div>
+                                        <Link to="/buyers" onClick={() => setIsMenuOpen(false)} className="block rounded-md px-6 py-2 text-[13px] font-semibold text-dark-700 hover:bg-light-100">
                                             Directorio
                                         </Link>
 
-                                        <div className="px-6 py-2 text-[11px] font-bold text-dark-500 tracking-wider uppercase mt-2">Precios</div>
-                                        <Link to="/pricing/sellers" onClick={() => setIsMenuOpen(false)} className="block px-6 py-2.5 text-[15px] font-medium text-[#7A7B8B] hover:bg-light-100 transition-colors">
-                                            Para Vendedores
+                                        <div className="mt-2 px-6 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-dark-400">Precios</div>
+                                        <Link to="/pricing/sellers" onClick={() => setIsMenuOpen(false)} className="block rounded-md px-6 py-2 text-[13px] font-semibold text-dark-700 hover:bg-light-100">
+                                            Planes para vendedores
                                         </Link>
-                                        <Link to="/pricing/buyers" onClick={() => setIsMenuOpen(false)} className="block px-6 py-2.5 text-[15px] font-medium text-[#7A7B8B] hover:bg-light-100 transition-colors">
-                                            Para Compradores
+                                        <Link to="/pricing/buyers" onClick={() => setIsMenuOpen(false)} className="block rounded-md px-6 py-2 text-[13px] font-semibold text-dark-700 hover:bg-light-100">
+                                            Planes para compradores
                                         </Link>
 
-                                        <div className="border-t border-light-300 my-2 mx-5"></div>
+                                        <div className="border-t border-line my-2 mx-5"></div>
                                         <Link to="/valuation" onClick={() => setIsMenuOpen(false)} className="block px-6 py-3 text-[15px] font-bold text-brand-900 hover:bg-brand-50 transition-colors">
                                             Valúa tu compañía
                                         </Link>
-                                        <div className="border-t border-light-300 my-2 mx-5"></div>
+                                        <div className="border-t border-line my-2 mx-5"></div>
                                     </div>
 
                                     <SignedOut>
@@ -273,7 +314,7 @@ const Header = () => {
                                     </SignedOut>
 
                                     <SignedIn>
-                                        <div className="px-6 py-3 border-b border-light-300 flex justify-between items-center">
+                                        <div className="px-6 py-3 border-b border-line flex justify-between items-center">
                                             <p className="text-[14px] font-bold text-dark-500 truncate mr-3">{userDisplayName}</p>
                                         </div>
                                         <Link
@@ -343,7 +384,7 @@ const Header = () => {
                                         </button>
                                     </SignedIn>
 
-                                    <div className="border-t border-light-300 my-2 mx-5"></div>
+                                    <div className="border-t border-line my-2 mx-5"></div>
 
                                     <Link
                                         to="#"
@@ -361,7 +402,7 @@ const Header = () => {
                                     </Link>
 
                                     <SignedIn>
-                                        <div className="border-t border-light-300 my-2 mx-5"></div>
+                                        <div className="border-t border-line my-2 mx-5"></div>
                                         <button
                                             type="button"
                                             onClick={handleLogout}

@@ -3,6 +3,7 @@ const express = require('express');
 const {
     createBusiness,
     getBusinesses,
+    getPublishedCities,
     getBusinessDetail,
     updateStatus,
     payListing,
@@ -16,6 +17,9 @@ const router = express.Router();
 
 // Private dashboard route (MUST be before /:slug to avoid collision)
 router.get('/dashboard', protect, getDashboardBusinesses);
+
+// Listado de ciudades (antes de /:slug para no capturar "cities" como slug)
+router.get('/cities', getPublishedCities);
 
 // Public routes (auth opcional: admin / comprador premium / dueño ven nombre real en listado)
 router.get('/', protect.optionalAttachUser, getBusinesses);

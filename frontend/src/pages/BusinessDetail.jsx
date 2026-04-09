@@ -27,7 +27,7 @@ const BusinessDetail = () => {
         fetchBusiness();
     }, [slug]);
 
-    if (loading) return <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-marine text-marine"></div></div>;
+    if (loading) return <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-900 text-brand-900"></div></div>;
     if (error) return <div className="text-center mt-20 text-red-600 font-medium">{error}</div>;
     if (!business) return <div className="text-center mt-20 font-medium text-gray-500">Negocio no encontrado.</div>;
 
@@ -61,7 +61,7 @@ const BusinessDetail = () => {
     return (
         <div className="bg-background min-h-[calc(100vh-4rem)] pb-12">
             {/* Header Banner */}
-            <div className="bg-marine text-white pt-12 pb-24 px-4 sm:px-6 lg:px-8">
+            <div className="bg-brand-900 text-white pt-12 pb-24 px-4 sm:px-6 lg:px-8">
                 <div className="max-w-5xl mx-auto">
                     <Link to="/marketplace" className="inline-flex items-center text-blue-200 hover:text-white mb-6 font-medium transition-colors">
                         <ChevronLeft className="h-4 w-4 mr-1" />
@@ -140,12 +140,12 @@ const BusinessDetail = () => {
                                             </div>
                                             <div>
                                                 <div className="text-sm text-gray-500 mb-1.5 font-medium flex items-center"><Mail className="h-4 w-4 mr-2" /> Correo de contacto</div>
-                                                <div className="font-bold text-marine text-lg">{confidentialData.contactEmail || 'No proporcionado'}</div>
+                                                <div className="font-bold text-brand-900 text-lg">{confidentialData.contactEmail || 'No proporcionado'}</div>
                                             </div>
                                             {confidentialData.website && (
                                                 <div className="sm:col-span-2 border-t border-gray-100 pt-6 mt-2">
                                                     <div className="text-sm text-gray-500 mb-1.5 font-medium flex items-center"><Globe className="h-4 w-4 mr-2" /> Sitio web oficial</div>
-                                                    <a href={confidentialData.website} target="_blank" rel="noopener noreferrer" className="font-bold text-marine hover:underline text-lg">
+                                                    <a href={confidentialData.website} target="_blank" rel="noopener noreferrer" className="font-bold text-brand-900 hover:underline text-lg">
                                                         {confidentialData.website}
                                                     </a>
                                                 </div>
@@ -181,7 +181,7 @@ const BusinessDetail = () => {
                                                 <p className="text-gray-500 text-sm mb-6">Sube al plan avanzado para ver contactos confidenciales, direcciones exactas y nombres legales verificados.</p>
                                                 <button
                                                     onClick={() => setShowPaywall(true)}
-                                                    className="w-full bg-marine text-white px-6 py-3 rounded-lg font-bold hover:bg-blue-900 shadow-md transition-all active:scale-95"
+                                                    className="w-full bg-brand-900 text-white px-6 py-3 rounded-lg font-bold hover:bg-blue-900 shadow-md transition-all active:scale-95"
                                                 >
                                                     Desbloquear informacion
                                                 </button>
@@ -200,7 +200,7 @@ const BusinessDetail = () => {
                             <div className="space-y-6">
                                 <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
                                     <div className="text-gray-500 text-sm mb-1 font-medium">Precio solicitado</div>
-                                    <div className="text-3xl font-extrabold text-marine tracking-tight">
+                                    <div className="text-3xl font-extrabold text-brand-900 tracking-tight">
                                         ${business.financials?.askingPrice?.toLocaleString()}
                                     </div>
                                 </div>
@@ -222,7 +222,7 @@ const BusinessDetail = () => {
                             <button
                                 type="button"
                                 onClick={handleContactSeller}
-                                className={`w-full mt-8 py-4 rounded-xl font-bold shadow-md transition-all flex justify-center items-center ${business.status === 'sold' ? 'bg-gray-100 text-gray-400 cursor-not-allowed shadow-none' : 'bg-marine text-white hover:bg-blue-900 active:scale-95'}`}
+                                className={`w-full mt-8 py-4 rounded-xl font-bold shadow-md transition-all flex justify-center items-center ${business.status === 'sold' ? 'bg-gray-100 text-gray-400 cursor-not-allowed shadow-none' : 'bg-brand-900 text-white hover:bg-blue-900 active:scale-95'}`}
                                 disabled={business.status === 'sold' || contactLoading}
                             >
                                 {business.status === 'sold' ? 'Listado vendido' : (

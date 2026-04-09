@@ -23,52 +23,52 @@ const BusinessCard = ({ business }) => {
     const canSave = Boolean(business?._id);
 
     return (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
+        <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-shadow hover:shadow-md">
             <div className="p-6">
-                <div className="flex justify-between items-start mb-4">
+                <div className="mb-4 flex items-start justify-between">
                     <div className="min-w-0 flex-1 pr-2">
-                        <h3 className="text-xl font-semibold text-marine truncate" title={business.title}>
+                        <h3 className="truncate text-xl font-semibold text-marine" title={business.title}>
                             {business.title}
                         </h3>
                     </div>
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                    <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800">
                         {categoryLabel(business.category)}
                     </span>
                 </div>
 
-                <p className="text-gray-600 text-sm mb-4 line-clamp-3 h-14">
+                <p className="mb-4 line-clamp-3 h-14 text-sm text-gray-600">
                     {business.description}
                 </p>
 
-                <div className="space-y-2 mb-6">
-                    <div className="flex items-center text-sm text-gray-500 truncate">
-                        <MapPin className="h-4 w-4 mr-2 flex-shrink-0" />
+                <div className="mb-6 space-y-2">
+                    <div className="flex items-center truncate text-sm text-gray-500">
+                        <MapPin className="mr-2 h-4 w-4 flex-shrink-0" />
                         {business.location?.city}, {business.location?.state}
                     </div>
-                    <div className="flex items-center text-sm text-gray-500 truncate">
-                        <Briefcase className="h-4 w-4 mr-2 flex-shrink-0" />
+                    <div className="flex items-center truncate text-sm text-gray-500">
+                        <Briefcase className="mr-2 h-4 w-4 flex-shrink-0" />
                         {business.sector} • {business.size}
                     </div>
-                    <div className="flex items-center text-sm font-semibold text-green-600 truncate">
-                        <TrendingUp className="h-4 w-4 mr-2 flex-shrink-0" />
+                    <div className="flex items-center truncate text-sm font-semibold text-green-600">
+                        <TrendingUp className="mr-2 h-4 w-4 flex-shrink-0" />
                         Precio solicitado: ${business.financials?.askingPrice?.toLocaleString()}
                     </div>
                 </div>
 
-                <div className="flex gap-2 items-stretch">
+                <div className="flex items-stretch gap-2">
                     {canSave ? (
                         <button
                             type="button"
                             title={isSignedIn ? 'Agregar a una lista' : 'Inicia sesión para guardar en listas'}
                             onClick={() => (isSignedIn ? setListModalOpen(true) : navigate('/signup'))}
-                            className="shrink-0 flex items-center justify-center w-11 rounded-lg border border-gray-200 bg-white text-marine hover:bg-gray-50 hover:border-marine/40 transition-colors"
+                            className="flex w-11 shrink-0 items-center justify-center rounded-lg border border-gray-200 bg-white text-marine transition-colors hover:border-marine/40 hover:bg-gray-50"
                         >
-                            <ListPlus className="w-5 h-5" strokeWidth={2.2} />
+                            <ListPlus className="h-5 w-5" strokeWidth={2.2} />
                         </button>
                     ) : null}
                     <Link
                         to={`/business/${business.slug}`}
-                        className="flex-1 text-center bg-gray-50 text-marine border border-gray-200 hover:bg-gray-100 font-medium py-2 px-4 rounded-lg transition-colors flex items-center justify-center"
+                        className="flex flex-1 items-center justify-center rounded-lg border border-gray-200 bg-gray-50 px-4 py-2 text-center font-medium text-marine transition-colors hover:bg-gray-100"
                     >
                         Ver detalles
                     </Link>

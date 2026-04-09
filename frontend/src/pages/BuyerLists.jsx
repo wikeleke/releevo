@@ -93,7 +93,7 @@ const BuyerLists = () => {
     if (!isLoaded) {
         return (
             <div className="min-h-screen flex items-center justify-center">
-                <Loader2 className="h-10 w-10 text-marine animate-spin" />
+                <Loader2 className="h-10 w-10 text-brand-900 animate-spin" />
             </div>
         );
     }
@@ -102,7 +102,7 @@ const BuyerLists = () => {
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
-                <Loader2 className="h-10 w-10 text-marine animate-spin" />
+                <Loader2 className="h-10 w-10 text-brand-900 animate-spin" />
             </div>
         );
     }
@@ -113,7 +113,7 @@ const BuyerLists = () => {
                 <button
                     type="button"
                     onClick={() => navigate('/dashboard/lists')}
-                    className="inline-flex items-center text-marine font-medium mb-6 hover:underline"
+                    className="inline-flex items-center text-brand-900 font-medium mb-6 hover:underline"
                 >
                     <ChevronLeft className="w-4 h-4 mr-1" />
                     Mis listas
@@ -135,7 +135,7 @@ const BuyerLists = () => {
                 {error && <div className="mb-4 text-red-600 text-sm">{error}</div>}
 
                 {(!detail.items || detail.items.length === 0) ? (
-                    <div className="bg-white border border-dashed border-gray-300 rounded-2xl p-12 text-center text-gray-500">
+                    <div className="bg-white border border-dashed border-line rounded-2xl p-12 text-center text-gray-500">
                         Aún no hay negocios en esta lista. Añádelos desde el mercado.
                     </div>
                 ) : (
@@ -144,7 +144,7 @@ const BuyerLists = () => {
                             const biz = row.business;
                             if (!biz) return null;
                             return (
-                                <li key={String(biz._id || row.business)} className="bg-white border border-gray-200 rounded-xl p-4 flex flex-wrap items-center justify-between gap-3">
+                                <li key={String(biz._id || row.business)} className="bg-white border border-line rounded-xl p-4 flex flex-wrap items-center justify-between gap-3">
                                     <div>
                                         <p className="font-bold text-gray-900">{biz.title}</p>
                                         <p className="text-sm text-gray-500">${biz.financials?.askingPrice?.toLocaleString()} · {biz.location?.city}</p>
@@ -152,7 +152,7 @@ const BuyerLists = () => {
                                     <div className="flex gap-2">
                                         <Link
                                             to={`/business/${biz.slug}`}
-                                            className="px-3 py-1.5 text-sm font-bold rounded-lg border border-gray-300 hover:bg-gray-50"
+                                            className="px-3 py-1.5 text-sm font-bold rounded-lg border border-line hover:bg-gray-50"
                                         >
                                             Ver
                                         </Link>
@@ -178,7 +178,7 @@ const BuyerLists = () => {
         return (
             <div className="max-w-4xl mx-auto px-4 py-10 text-center text-gray-600">
                 {error || 'Lista no encontrada.'}
-                <button type="button" className="block mx-auto mt-4 text-marine font-bold" onClick={() => navigate('/dashboard/lists')}>
+                <button type="button" className="block mx-auto mt-4 text-brand-900 font-bold" onClick={() => navigate('/dashboard/lists')}>
                     Volver
                 </button>
             </div>
@@ -192,20 +192,20 @@ const BuyerLists = () => {
 
             {error && <div className="mb-4 text-red-600 text-sm bg-red-50 rounded-lg px-4 py-3">{error}</div>}
 
-            <form onSubmit={createList} className="flex flex-wrap gap-2 items-center mb-10 bg-white border border-gray-200 rounded-xl p-4">
-                <FolderOpen className="w-5 h-5 text-marine shrink-0" />
+            <form onSubmit={createList} className="flex flex-wrap gap-2 items-center mb-10 bg-white border border-line rounded-xl p-4">
+                <FolderOpen className="w-5 h-5 text-brand-900 shrink-0" />
                 <input
                     type="text"
                     value={newName}
                     onChange={(e) => setNewName(e.target.value)}
                     placeholder="Nombre de la nueva lista"
-                    className="flex-1 min-w-[200px] rounded-lg border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-marine/25 outline-none"
+                    className="flex-1 min-w-[200px] rounded-lg border border-line px-3 py-2 text-sm focus:ring-2 focus:ring-brand-900/20 outline-none"
                     maxLength={120}
                 />
                 <button
                     type="submit"
                     disabled={creating || !newName.trim()}
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-marine text-white text-sm font-bold rounded-lg hover:bg-blue-900 disabled:opacity-50"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-brand-900 text-white text-sm font-bold rounded-lg hover:bg-brand-700 disabled:opacity-50"
                 >
                     <Plus className="w-4 h-4" /> Crear
                 </button>
@@ -219,7 +219,7 @@ const BuyerLists = () => {
                         <li key={list._id}>
                             <Link
                                 to={`/dashboard/lists/${list._id}`}
-                                className="block bg-white border border-gray-200 rounded-xl p-5 hover:border-marine/40 hover:shadow-sm transition-all"
+                                className="block bg-white border border-line rounded-xl p-5 hover:border-brand-900/30 hover:shadow-sm transition-all"
                             >
                                 <span className="font-bold text-lg text-oxford">{list.name}</span>
                                 <p className="text-sm text-gray-500 mt-1">{list.items?.length || 0} negocios</p>
