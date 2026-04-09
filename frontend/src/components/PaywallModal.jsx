@@ -1,11 +1,13 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Lock, ShieldCheck, X } from 'lucide-react';
 
-const PaywallModal = ({ onClose }) => {
-    const handleUpgrade = () => {
-        // TODO: Integrate with a real payment flow (e.g. Stripe)
-        alert('La mejora a membresia avanzada estara disponible pronto.');
+const PaywallModal = ({ onClose, pricingPath = '/pricing/buyers' }) => {
+    const navigate = useNavigate();
+
+    const handleAcquireMembership = () => {
         onClose();
+        navigate(pricingPath);
     };
 
     return (
@@ -41,14 +43,19 @@ const PaywallModal = ({ onClose }) => {
                             <ShieldCheck className="h-5 w-5 text-green-500 mr-3 flex-shrink-0 mt-0.5" />
                             <span className="text-gray-700 font-medium">Obtener datos directos de contacto del dueno</span>
                         </li>
+                        <li className="flex items-start">
+                            <ShieldCheck className="h-5 w-5 text-green-500 mr-3 flex-shrink-0 mt-0.5" />
+                            <span className="text-gray-700 font-medium">Contactar al vendedor</span>
+                        </li>
                     </ul>
 
                     <button
-                        onClick={handleUpgrade}
+                        type="button"
+                        onClick={handleAcquireMembership}
                         className="w-full bg-marine text-white py-4 rounded-xl font-bold hover:bg-blue-900 transition-colors shadow-lg flex justify-center items-center group"
                     >
                         <Lock className="h-4 w-4 mr-2 group-hover:scale-110 transition-transform" />
-                        Mejorar membresia
+                        Adquirir membresia
                     </button>
 
                     <p className="text-center text-xs text-gray-400 mt-5">
