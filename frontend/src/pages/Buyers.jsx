@@ -106,14 +106,14 @@ const Buyers = () => {
                                 Volverte miembro avanzado <ArrowRight className="ml-2 h-5 w-5" />
                             </Link>
                         </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                            <div className="bg-[#111124] p-8 rounded-[32px] text-white">
-                                <Building2 className="w-10 h-10 text-brand-300 mb-6" />
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 items-stretch">
+                            <div className="flex min-h-[224px] h-full flex-col rounded-[32px] bg-brand-100 p-8 text-oxford">
+                                <Building2 className="mb-6 h-10 w-10 text-brand-900" />
                                 <div className="text-4xl font-black mb-2">50k+</div>
-                                <div className="text-[#7A7B8B] font-medium">Compradores verificados listos para invertir.</div>
+                                <div className="font-medium text-dark-500">Compradores verificados listos para invertir.</div>
                             </div>
-                            <div className="bg-brand-900 p-8 rounded-[32px] text-white sm:mt-12">
-                                <TrendingUp className="w-10 h-10 text-brand-100 mb-6" />
+                            <div className="flex min-h-[224px] h-full flex-col rounded-[32px] bg-brand-900 p-8 text-white">
+                                <TrendingUp className="mb-6 h-10 w-10 text-brand-100" />
                                 <div className="text-4xl font-black mb-2">$500M+</div>
                                 <div className="text-brand-100 font-medium">Volumen transaccionado por nuestra red.</div>
                             </div>
