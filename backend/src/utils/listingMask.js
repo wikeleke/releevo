@@ -40,3 +40,39 @@ exports.maskedListingDescription = (b) => {
     if (scale) text += ` ${scale}.`;
     return text.replace(/\s+/g, ' ').trim();
 };
+
+const normalizeRole = (rawRole) => {
+    if (typeof rawRole !== 'string') return '';
+    return rawRole.trim().toLowerCase();
+};
+
+const sellerIdFrom = (business) => {
+    const seller = business?.sellerId;
+    return seller?._id || seller || null;
+};
+
+exports.canSeeListingIdentity = (user, business) => {
+    if (!user || !business) return false;
+    const role = normalizeRole(user.role);
+    if (role === 'admin') return true;
+    if (user.isPremium) return true;
+
+    const sellerId = sellerIdFrom(business);
+    return Boolean(sellerId && user._id && String(sellerId) === String(user._id));
+};
+
+exports.maskListingForUser = (business, user) => {
+    const source = business?.toObject ? business.toObject() : { ...(business || {}) };
+    if (exports.canSeeListingIdentity(user, source)) {
+        return source;
+    }
+
+    const { sellerId, ...safe } = source;
+    return {
+        ...safe,
+        slug: String(source._id || ''),
+        title: exports.publicListingLabel(source),
+        description: exports.maskedListingDescription(source),
+        isTitleMasked: true,
+    };
+};

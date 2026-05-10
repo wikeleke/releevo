@@ -1,7 +1,35 @@
 const BuyerList = require('../models/BuyerList');
 const Business = require('../models/Business');
+const { maskListingForUser } = require('../utils/listingMask');
 
 const normalizeName = (name) => String(name || '').trim().slice(0, 120);
+
+const WATCHLIST_BUSINESS_FIELDS = 'title slug description giro category sector size location financials status isListingPaid sellerId';
+
+const maskPopulatedBusinesses = (list, user) => {
+    if (!list) return list;
+    return {
+        ...list,
+        items: (list.items || []).map((item) => {
+            const isPopulatedBusiness =
+                item.business &&
+                typeof item.business === 'object' &&
+                (Object.prototype.hasOwnProperty.call(item.business, 'title') ||
+                    Object.prototype.hasOwnProperty.call(item.business, 'slug'));
+            const business = isPopulatedBusiness
+                ? maskListingForUser(item.business, user)
+                : item.business;
+            return { ...item, business };
+        }),
+    };
+};
+
+const findPopulatedList = async (listId, user) => {
+    const list = await BuyerList.findById(listId)
+        .populate('items.business', WATCHLIST_BUSINESS_FIELDS)
+        .lean();
+    return maskPopulatedBusinesses(list, user);
+};
 
 exports.listMine = async (req, res) => {
     try {
@@ -83,11 +111,12 @@ exports.addBusiness = async (req, res) => {
         if (!list) return res.status(404).json({ message: 'Lista no encontrada' });
         const exists = list.items.some((i) => String(i.business) === String(businessId));
         if (exists) {
-            return res.json(list);
+            const populated = await findPopulatedList(list._id, req.user);
+            return res.json(populated);
         }
         list.items.push({ business: businessId, addedAt: new Date() });
         await list.save();
-        const populated = await BuyerList.findById(list._id).populate('items.business', 'title slug giro category location financials status');
+        const populated = await findPopulatedList(list._id, req.user);
         res.json(populated);
     } catch (err) {
         console.error(err);
@@ -112,9 +141,10 @@ exports.removeBusiness = async (req, res) => {
 exports.getOne = async (req, res) => {
     try {
         const list = await BuyerList.findOne({ _id: req.params.id, buyerId: req.user._id })
-            .populate('items.business', 'title slug giro category sector location financials status isListingPaid');
+            .populate('items.business', WATCHLIST_BUSINESS_FIELDS)
+            .lean();
         if (!list) return res.status(404).json({ message: 'Lista no encontrada' });
-        res.json(list);
+        res.json(maskPopulatedBusinesses(list, req.user));
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Server error' });

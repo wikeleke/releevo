@@ -8,19 +8,31 @@ const generateToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '30d' });
 };
 
+const publicSignupRole = (rawRole) => {
+    if (rawRole === undefined || rawRole === null || rawRole === '') return 'buyer';
+    if (typeof rawRole !== 'string') return null;
+    const role = rawRole.trim().toLowerCase();
+    return ['buyer', 'seller'].includes(role) ? role : null;
+};
+
 // @desc    Register new user
 // @route   POST /api/auth/signup
 // @access  Public
 exports.signup = async (req, res) => {
     const { email, password, role } = req.body;
     try {
+        const safeRole = publicSignupRole(role);
+        if (!safeRole) {
+            return res.status(400).json({ message: 'Invalid signup role' });
+        }
+
         // Check if user exists
         let user = await User.findOne({ email });
         if (user) {
             return res.status(400).json({ message: 'User already exists' });
         }
         // Create user
-        user = new User({ email, password, role });
+        user = new User({ email, password, role: safeRole });
         await user.save();
         const token = generateToken(user._id);
         res.status(201).json({ token, user: { email: user.email, role: user.role, isPremium: user.isPremium } });

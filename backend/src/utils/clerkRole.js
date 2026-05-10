@@ -6,6 +6,17 @@ const normalizeRole = (rawRole) => {
 
 const metadataRole = (metadata) => normalizeRole(metadata?.role);
 
+const parseBoolean = (value) => {
+    if (typeof value === 'boolean') return value;
+    if (typeof value === 'string') {
+        if (value.toLowerCase() === 'true') return true;
+        if (value.toLowerCase() === 'false') return false;
+    }
+    return null;
+};
+
+const metadataPremium = (metadata) => parseBoolean(metadata?.isPremium);
+
 /**
  * Clerk REST webhook payload snake_case
  */
@@ -13,8 +24,9 @@ exports.roleFromClerkWebhookUser = (clerkUser) => {
     const candidates = [
         clerkUser?.role,
         metadataRole(clerkUser?.public_metadata),
+        metadataRole(clerkUser?.publicMetadata),
         metadataRole(clerkUser?.private_metadata),
-        metadataRole(clerkUser?.unsafe_metadata),
+        metadataRole(clerkUser?.privateMetadata),
     ];
     return candidates.find(Boolean) || null;
 };
@@ -24,11 +36,22 @@ exports.roleFromClerkWebhookUser = (clerkUser) => {
  */
 exports.roleFromClerkSdkUser = (clerkUser) => {
     const candidates = [
+        normalizeRole(clerkUser?.role),
         metadataRole(clerkUser?.publicMetadata),
         metadataRole(clerkUser?.privateMetadata),
-        metadataRole(clerkUser?.unsafeMetadata),
     ];
     return candidates.find(Boolean) || null;
+};
+
+exports.premiumFromClerkWebhookUser = (clerkUser) => {
+    const candidates = [
+        parseBoolean(clerkUser?.isPremium),
+        metadataPremium(clerkUser?.public_metadata),
+        metadataPremium(clerkUser?.publicMetadata),
+        metadataPremium(clerkUser?.private_metadata),
+        metadataPremium(clerkUser?.privateMetadata),
+    ];
+    return candidates.find((value) => value !== null) ?? null;
 };
 
 exports.shouldUpgradeMongoRole = (currentRoleRaw, nextRoleRaw) => {
