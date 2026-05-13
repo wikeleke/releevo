@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 require('dotenv').config();
 const User = require('../models/User');
+const { shouldExposePasswordResetLink } = require('../utils/passwordReset');
 
 // Generate JWT
 const generateToken = (id) => {
@@ -67,16 +68,18 @@ exports.forgotPassword = async (req, res) => {
         
         await user.save({ validateBeforeSave: false });
 
-        // Frontend URL should be dynamic based on origin, for now we assume standard local setup or relative routing
         const resetUrl = `/reset-password/${resetToken}`;
-        
-        // Return demoLink since an actual email SMTP provider isn't configured
-        console.log(`Test Password reset link generated: http://localhost:5173${resetUrl}`);
-        
-        res.status(200).json({ 
-            message: 'Password reset instructions sent. For local testing, use the link provided.', 
-            demoLink: resetUrl 
-        });
+
+        const response = {
+            message: 'Password reset instructions sent.',
+        };
+
+        if (shouldExposePasswordResetLink()) {
+            console.log(`Test password reset link generated: http://localhost:5173${resetUrl}`);
+            response.demoLink = resetUrl;
+        }
+
+        res.status(200).json(response);
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Server error' });
