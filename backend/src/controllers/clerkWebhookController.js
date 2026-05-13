@@ -2,50 +2,9 @@ const crypto = require('crypto');
 const { Webhook } = require('svix');
 const User = require('../models/User');
 
-const { shouldUpgradeMongoRole } = require('../utils/clerkRole');
+const { accessFromClerkWebhookUser, shouldUpgradeMongoRole } = require('../utils/clerkRole');
 
 const randomPassword = () => `clerk_${crypto.randomBytes(24).toString('hex')}`;
-
-const normalizeRole = (rawRole) => {
-  if (typeof rawRole !== 'string') return null;
-  const role = rawRole.trim().toLowerCase();
-  return ['admin', 'seller', 'buyer'].includes(role) ? role : null;
-};
-
-const parseBoolean = (value) => {
-  if (typeof value === 'boolean') return value;
-  if (typeof value === 'string') {
-    if (value.toLowerCase() === 'true') return true;
-    if (value.toLowerCase() === 'false') return false;
-  }
-  return null;
-};
-
-const getRoleAndPremium = (clerkUser) => {
-  const metadataSources = [
-    clerkUser?.public_metadata,
-    clerkUser?.publicMetadata,
-    clerkUser?.private_metadata,
-    clerkUser?.privateMetadata,
-    clerkUser?.unsafe_metadata,
-    clerkUser?.unsafeMetadata,
-  ];
-
-  const roleCandidate = [
-    clerkUser?.role,
-    ...metadataSources.map((metadata) => metadata?.role),
-  ].find((value) => normalizeRole(value));
-
-  const premiumCandidate = [
-    clerkUser?.isPremium,
-    ...metadataSources.map((metadata) => metadata?.isPremium),
-  ].find((value) => parseBoolean(value) !== null);
-
-  return {
-    role: normalizeRole(roleCandidate),
-    isPremium: parseBoolean(premiumCandidate),
-  };
-};
 
 const getPrimaryEmail = (clerkUser) => {
   const emailAddresses = clerkUser?.email_addresses || [];
@@ -57,7 +16,7 @@ const getPrimaryEmail = (clerkUser) => {
 const upsertFromClerkUser = async (clerkUser) => {
   const clerkId = clerkUser.id;
   const email = getPrimaryEmail(clerkUser);
-  const { role, isPremium } = getRoleAndPremium(clerkUser);
+  const { role, isPremium } = accessFromClerkWebhookUser(clerkUser);
 
   if (!email) {
     throw new Error(`Missing email for Clerk user ${clerkId}`);
