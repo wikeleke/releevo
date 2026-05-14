@@ -1,25 +1,10 @@
 // src/controllers/businessController.js
 const Business = require('../models/Business');
+const mongoose = require('mongoose');
 const slugify = require('slugify');
 const getStripe = require('../config/stripe');
-const { publicListingLabel, maskedListingDescription } = require('../utils/listingMask');
+const { maskListingForViewer, normalizeRole } = require('../utils/listingVisibility');
 const { resolveMarketSectorCondition } = require('../utils/marketFilters');
-
-const normalizeRole = (rawRole) => {
-    if (typeof rawRole !== 'string') return '';
-    return rawRole.trim().toLowerCase();
-};
-
-const canSeeListingIdentity = (user, business) => {
-    if (!user || !business) return false;
-    const role = normalizeRole(user.role);
-    if (role === 'admin') return true;
-    if (user.isPremium) return true;
-    const sidRaw = business.sellerId;
-    const sid = sidRaw?._id || sidRaw;
-    if (sid && String(sid) === String(user._id)) return true;
-    return false;
-};
 
 // @desc    Create new business listing (seller only)
 // @route   POST /api/business
@@ -77,17 +62,7 @@ exports.getBusinesses = async (req, res) => {
             .select('title slug description category sector giro size location financials status sellerId')
             .lean();
 
-        const payload = businesses.map((b) => {
-            if (canSeeListingIdentity(req.user, b)) {
-                return b;
-            }
-            return {
-                ...b,
-                title: publicListingLabel(b),
-                description: maskedListingDescription(b),
-                isTitleMasked: true,
-            };
-        });
+        const payload = businesses.map((b) => maskListingForViewer(b, req.user));
 
         res.json(payload);
     } catch (err) {
@@ -126,7 +101,11 @@ exports.getPublishedCities = async (req, res) => {
 // @access  Public (premium guard inside)
 exports.getBusinessDetail = async (req, res) => {
     try {
-        const business = await Business.findOne({ slug: req.params.slug }).populate('sellerId', 'email role');
+        const identifier = req.params.slug;
+        const lookup = mongoose.Types.ObjectId.isValid(identifier)
+            ? { $or: [{ slug: identifier }, { _id: identifier }] }
+            : { slug: identifier };
+        const business = await Business.findOne(lookup).populate('sellerId', 'email role');
         if (!business) return res.status(404).json({ message: 'Business not found' });
         const role = normalizeRole(req.user?.role);
         const sellerRef = business.sellerId?._id || business.sellerId;
@@ -136,13 +115,11 @@ exports.getBusinessDetail = async (req, res) => {
             req.user && (req.user.isPremium || role === 'admin' || isOwner)
         );
 
-        const bPlain = business.toObject ? business.toObject() : business;
-
         const response = {
             _id: business._id,
-            title: canViewConfidential ? business.title : publicListingLabel(bPlain),
+            title: business.title,
             slug: business.slug,
-            description: canViewConfidential ? business.description : maskedListingDescription(bPlain),
+            description: business.description,
             category: business.category,
             sector: business.sector,
             giro: business.giro,
@@ -153,12 +130,13 @@ exports.getBusinessDetail = async (req, res) => {
             isTitleMasked: !canViewConfidential,
             canViewConfidential,
         };
+        const maskedResponse = canViewConfidential ? response : maskListingForViewer(response, req.user);
 
         // Premium users and admins can always view confidential listing details.
         if (canViewConfidential) {
             response.confidentialData = business.confidentialData;
         }
-        res.json(response);
+        res.json(canViewConfidential ? response : maskedResponse);
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Server error' });

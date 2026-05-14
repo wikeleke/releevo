@@ -1,7 +1,29 @@
 const BuyerList = require('../models/BuyerList');
 const Business = require('../models/Business');
+const { maskListingForViewer } = require('../utils/listingVisibility');
 
 const normalizeName = (name) => String(name || '').trim().slice(0, 120);
+const WATCHLIST_BUSINESS_FIELDS = 'title slug description giro category sector location financials status isListingPaid sellerId';
+
+const serializeBusinessForViewer = (businessDoc, user) => {
+    if (!businessDoc) return businessDoc;
+    const business = maskListingForViewer(businessDoc, user);
+    delete business.sellerId;
+    return business;
+};
+
+const serializeListForViewer = (list, user) => {
+    const plain = list?.toObject ? list.toObject() : list;
+    if (!plain) return plain;
+
+    return {
+        ...plain,
+        items: (plain.items || []).map((item) => ({
+            ...item,
+            business: serializeBusinessForViewer(item.business, user),
+        })),
+    };
+};
 
 exports.listMine = async (req, res) => {
     try {
@@ -87,8 +109,8 @@ exports.addBusiness = async (req, res) => {
         }
         list.items.push({ business: businessId, addedAt: new Date() });
         await list.save();
-        const populated = await BuyerList.findById(list._id).populate('items.business', 'title slug giro category location financials status');
-        res.json(populated);
+        const populated = await BuyerList.findById(list._id).populate('items.business', WATCHLIST_BUSINESS_FIELDS);
+        res.json(serializeListForViewer(populated, req.user));
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Server error' });
@@ -112,9 +134,9 @@ exports.removeBusiness = async (req, res) => {
 exports.getOne = async (req, res) => {
     try {
         const list = await BuyerList.findOne({ _id: req.params.id, buyerId: req.user._id })
-            .populate('items.business', 'title slug giro category sector location financials status isListingPaid');
+            .populate('items.business', WATCHLIST_BUSINESS_FIELDS);
         if (!list) return res.status(404).json({ message: 'Lista no encontrada' });
-        res.json(list);
+        res.json(serializeListForViewer(list, req.user));
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Server error' });

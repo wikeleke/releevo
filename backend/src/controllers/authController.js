@@ -8,11 +8,13 @@ const generateToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '30d' });
 };
 
+const LEGACY_SIGNUP_ROLE = 'buyer';
+
 // @desc    Register new user
 // @route   POST /api/auth/signup
 // @access  Public
 exports.signup = async (req, res) => {
-    const { email, password, role } = req.body;
+    const { email, password } = req.body;
     try {
         // Check if user exists
         let user = await User.findOne({ email });
@@ -20,7 +22,7 @@ exports.signup = async (req, res) => {
             return res.status(400).json({ message: 'User already exists' });
         }
         // Create user
-        user = new User({ email, password, role });
+        user = new User({ email, password, role: LEGACY_SIGNUP_ROLE });
         await user.save();
         const token = generateToken(user._id);
         res.status(201).json({ token, user: { email: user.email, role: user.role, isPremium: user.isPremium } });
