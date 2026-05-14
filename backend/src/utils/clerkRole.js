@@ -14,7 +14,6 @@ exports.roleFromClerkWebhookUser = (clerkUser) => {
         clerkUser?.role,
         metadataRole(clerkUser?.public_metadata),
         metadataRole(clerkUser?.private_metadata),
-        metadataRole(clerkUser?.unsafe_metadata),
     ];
     return candidates.find(Boolean) || null;
 };
@@ -26,7 +25,6 @@ exports.roleFromClerkSdkUser = (clerkUser) => {
     const candidates = [
         metadataRole(clerkUser?.publicMetadata),
         metadataRole(clerkUser?.privateMetadata),
-        metadataRole(clerkUser?.unsafeMetadata),
     ];
     return candidates.find(Boolean) || null;
 };

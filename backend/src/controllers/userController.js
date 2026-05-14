@@ -30,8 +30,8 @@ const mergeClerkRole = async (clerkId, role) => {
     if (!clerkId) return;
     try {
         const clerkUser = await clerkClient.users.getUser(clerkId);
-        const merged = { ...(clerkUser.unsafeMetadata || {}), role };
-        await clerkClient.users.updateUser(clerkId, { unsafeMetadata: merged });
+        const merged = { ...(clerkUser.publicMetadata || {}), role };
+        await clerkClient.users.updateUser(clerkId, { publicMetadata: merged });
     } catch (clerkErr) {
         console.error('Clerk updateUser (onboarding):', clerkErr?.message || clerkErr);
     }
