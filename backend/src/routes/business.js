@@ -23,7 +23,7 @@ router.get('/cities', getPublishedCities);
 
 // Public routes (auth opcional: admin / comprador premium / dueño ven nombre real en listado)
 router.get('/', protect.optionalAttachUser, getBusinesses);
-router.get('/:slug', protect, getBusinessDetail); // protect to get user info for premium check
+router.get('/:slug', protect.optionalAttachUser, getBusinessDetail);
 
 // Seller/Admin routes
 router.post('/', protect, roleCheck(['seller', 'admin']), createBusiness);
