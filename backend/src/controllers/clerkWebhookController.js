@@ -27,8 +27,6 @@ const getRoleAndPremium = (clerkUser) => {
     clerkUser?.publicMetadata,
     clerkUser?.private_metadata,
     clerkUser?.privateMetadata,
-    clerkUser?.unsafe_metadata,
-    clerkUser?.unsafeMetadata,
   ];
 
   const roleCandidate = [
